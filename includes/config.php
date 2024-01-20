@@ -1,7 +1,7 @@
 <?php
 
 
-$dbcon = mysqli_connect("localhost","hustlersfather_artmir","hustlersfather_artmir","hustlersfather_artmir") or die('enable connection'); 
+$dbcon = mysqli_connect("localhost","xbaseleets_vulinx","xbaseleets_vulinx","xbaseleets_vulinx") or die('enable connection'); 
 
 
 
