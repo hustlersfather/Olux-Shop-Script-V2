@@ -30,43 +30,43 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
-  `acctype` varchar(255) NOT NULL,
+  `acctype` varchar(255) NOT NULL,  
+  `acc_type` varchar(255) NOT NULL,  
+  `acccategory` varchar(255) NOT NULL,
+  `acc_category` varchar(255) NOT NULL,
   `country` varchar(255) NOT NULL,
+  `acc_country` varchar(255) NOT NULL,
   `infos` varchar(255) NOT NULL,
+  `acc_infos` varchar(255) NOT NULL,
   `price` int(11) NOT NULL,
   `url` varchar(255) NOT NULL,
+  `acc_url` varchar(255) NOT NULL,
   `sold` int(11) NOT NULL,
+  `acc_sold` int(11) NOT NULL,
   `sto` varchar(255) NOT NULL,
+  `acc_sto` varchar(255) NOT NULL,
   `dateofsold` text DEFAULT NULL,
   `date` text NOT NULL,
   `resseller` varchar(255) NOT NULL,
+  `res_seller` varchar(255) NOT NULL,
+  `newbuyer` varchar(255) NOT NULL,
+  `new_buyer` varchar(255) NOT NULL,
+  
+  `news` varchar(255) NOT NULL,
+  `acc_news` varchar(255) NOT NULL,
+  `manager` varchar(255) NOT NULL,
   `reported` varchar(255) NOT NULL,
+  `acc_reported` varchar(255) NOT NULL,
   `sitename` varchar(255) NOT NULL,
+  `acc_name` varchar(255) NOT NULL,
   `login` varchar(100) DEFAULT NULL,
-  `pass` varchar(100) DEFAULT NULL
+  `acc_login` varchar(100) DEFAULT NULL,
+  `pass` varchar(100) DEFAULT NULL,
+  `acc_pass` varchar(100) DEFAULT NULL,
+  `balance` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `accounts`
---
 
-INSERT INTO `accounts` (`id`, `acctype`, `country`, `infos`, `price`, `url`, `sold`, `sto`, `dateofsold`, `date`, `resseller`, `reported`, `sitename`, `login`, `pass`) VALUES
-(1, 'account', 'Albania', 'dsfds', 12, 'Nerflix.com | fdsfds ', 1, 'omermaksuti', '2020-03-24 15:22:30', '22/03/2020 02:35:15 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(2, 'account', 'United States', 'Fresh Accounts', 7, 'Nerflix.com | fdsfdsf ', 1, 'omermaksuti', '2020-05-01 18:30:30', '22/03/2020 02:48:12 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(3, 'account', 'United States', 'Fresh Accounts', 4, 'Nerflix.com | fdsfdsfdsadsa ', 1, 'omermaksuti', '2020-04-29 10:09:59', '22/03/2020 02:48:23 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(4, 'account', 'United States', 'Fresh Accounts', 4, 'Nerflix.com | dsadsadsadsa ', 1, 'omermaksuti', '2020-04-05 19:08:37', '22/03/2020 02:48:27 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(5, 'account', 'United States', 'Fresh Accounts', 4, 'Nerflix.com | dsadsadsadsadsadsa ', 0, 'omermaksuti', '2020-04-29 10:09:57', '22/03/2020 02:48:32 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(6, 'account', 'United Arab Emirates', 'Fresh Accounts', 3, 'Nerflix.com | teste@gmail.com Pass: test1233 ', 1, 'omermaksuti', '2020-03-25 12:27:23', '24/03/2020 07:33:16 pm', 'omermaksuti', '', 'Nerflix.com', NULL, NULL),
-(8, 'account', 'Albania', 'test upwork', 25, 'Upwork | teste@upwork.com | test ', 1, 'omermaksuti', '2020-05-01 21:13:36', '29/04/2020 10:39:49 am', 'omermaksuti', '', 'Upwork', NULL, NULL),
-(11, 'account', 'Albania', 'dsfds', 12, 'Nerflix.com | fdsfds ', 0, 'omermaksuti', '2020-05-05 12:23:51', '22/03/2020 02:35:15 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(12, 'account', 'Albania', 'dsfds', 12, 'Nerflix.com | fdsfds ', 0, 'omermaksuti', '2020-05-04 15:44:04', '01/05/2020 01:01:15 pm', 'fisnik', '', 'Nerflix.com', '', ''),
-(13, 'account', 'United Arab Emirates', 'Fresh Accounts', 3, 'Nerflix.com | teste@gmail.com Pass: test1233 ', 0, 'omermaksuti', '2020-03-25 12:27:23', '24/03/2020 07:33:16 pm', 'omermaksuti', '', 'Nerflix.com', NULL, NULL),
-(15, 'account', 'Albania', 'Fresh Accounts', 50, 'https://lexoje.al/ | fsfdsfdsf ', 0, '', '0', '08/05/2020 07:35:40 pm', '', '', 'https://lexoje.al/', NULL, NULL),
-(16, 'account', 'Albania', 'Fresh Accounts', 50, 'https://lexoje.al/ | fsfdsfdsf ', 0, '', '0', '08/05/2020 08:11:43 pm', '', '', 'https://lexoje.al/', NULL, NULL),
-(17, 'account', 'Andorra', 'Fresh Accounts', 56, 'https://lexoje.al/ | fgfdg ', 0, '', '0', '08/05/2020 08:14:50 pm', 'omermaksuti', '', 'https://lexoje.al/', NULL, NULL),
-(18, 'account', 'Andorra', 'Fresh Accounts', 56, 'https://lexoje.al/ | fgfdg ', 0, '', '0', '08/05/2020 08:16:01 pm', 'omermaksuti', '', 'https://lexoje.al/', NULL, NULL),
-(19, 'account', 'American Samoa', 'dsfds', 5, 'https://lexoje.al/ | fdsaf ', 0, '', '0', '08/05/2020 08:16:26 pm', 'omermaksuti', '', 'https://lexoje.al/', NULL, NULL),
-(20, 'account', 'American Samoa', 'dsfds', 15, 'https://lexoje.al/ | dfgsdfgfdgsfd ', 0, '', '0', '13/05/2020 01:30:46 am', 'omermaksuti', '', 'https://lexoje.al/', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -102,27 +102,6 @@ INSERT INTO `banks` (`id`, `acctype`, `country`, `infos`, `price`, `url`, `sold`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cpanels`
---
-
-CREATE TABLE `cpanels` (
-  `id` int(11) NOT NULL,
-  `acctype` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `infos` text NOT NULL,
-  `url` text NOT NULL,
-  `price` int(11) NOT NULL,
-  `sold` int(11) NOT NULL,
-  `sto` varchar(255) NOT NULL,
-  `dateofsold` timestamp NOT NULL DEFAULT current_timestamp(),
-  `resseller` varchar(255) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `reported` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `images`
 --
 
@@ -135,65 +114,14 @@ CREATE TABLE `images` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `leads`
---
-
-CREATE TABLE `leads` (
-  `id` int(11) NOT NULL,
-  `acctype` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `infos` text NOT NULL,
-  `url` text NOT NULL,
-  `price` int(11) NOT NULL,
-  `resseller` varchar(255) NOT NULL,
-  `sold` int(11) NOT NULL,
-  `sto` varchar(255) NOT NULL,
-  `dateofsold` text NOT NULL,
-  `date` text NOT NULL,
-  `number` text NOT NULL,
-  `reported` text NOT NULL,
-  `login` text DEFAULT NULL,
-  `pass` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `leads`
---
-
-INSERT INTO `leads` (`id`, `acctype`, `country`, `infos`, `url`, `price`, `resseller`, `sold`, `sto`, `dateofsold`, `date`, `number`, `reported`, `login`, `pass`) VALUES
-(1, 'leads', 'United States', 'Hotmail SHOP', 'https://google.com/', 3, 'omermaksuti', 1, 'omermaksuti', '2020-03-24 19:45:22', '24/03/2020 07:42:23 pm', '5k', '', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mailers`
---
-
-CREATE TABLE `mailers` (
-  `id` int(11) NOT NULL,
-  `acctype` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `infos` text NOT NULL,
-  `url` text NOT NULL,
-  `price` int(11) NOT NULL,
-  `resseller` varchar(255) NOT NULL,
-  `sold` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `dateofsold` timestamp NOT NULL DEFAULT current_timestamp(),
-  `reported` varchar(255) NOT NULL,
-  `sto` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `manager`
 --
 
 CREATE TABLE `manager` (
   `id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -288,9 +216,11 @@ INSERT INTO `payment` (`id`, `user`, `method`, `amount`, `amountusd`, `address`,
 CREATE TABLE `purchases` (
   `id` int(11) NOT NULL,
   `s_id` int(11) NOT NULL,
+  `purchase_id` int(11) NOT NULL,
   `buyer` varchar(50) NOT NULL,
   `type` varchar(255) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `purchase_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `country` varchar(255) NOT NULL,
   `infos` varchar(255) NOT NULL,
   `url` varchar(255) NOT NULL,
@@ -333,24 +263,6 @@ INSERT INTO `purchases` (`id`, `s_id`, `buyer`, `type`, `date`, `country`, `info
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `rdps`
---
-
-CREATE TABLE `rdps` (
-  `id` int(11) DEFAULT NULL,
-  `acctype` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `city` varchar(255) NOT NULL,
-  `hosting` varchar(255) NOT NULL,
-  `ram` int(11) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `price` int(11) NOT NULL,
-  `resseller` varchar(255) NOT NULL,
-  `sold` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `reports`
@@ -538,9 +450,10 @@ INSERT INTO `tutorials` (`id`, `acctype`, `country`, `infos`, `url`, `price`, `r
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `balance` int(11) DEFAULT 0,
   `ipurchassed` text DEFAULT NULL,
   `ip` text DEFAULT NULL,
@@ -552,19 +465,6 @@ CREATE TABLE `users` (
   `resetpin` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`, `email`, `balance`, `ipurchassed`, `ip`, `lastlogin`, `datereg`, `resseller`, `img`, `testemail`, `resetpin`) VALUES
-(9, 'omermaksuti', 'cVZodkZROG9zcTZFVjFhOEVQMHZaUT09', 'omeri@gmai.com', 141, '37', '::1', '2020-03-22', '2020-03-22', 1, '', 'omermaksuti@yandex.com', 0),
-(11, 'fisnik', 'by9aR2kzbm9VMW15ZnVrWGJ4QlVnZz09', 'omermma@gmail.com', 0, '0', '::1', '2020-03-24', '2020-03-24', 1, '', 'omermma@gmail.com', 0),
-(12, 'testbaba', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'omertest@gmail.com', 0, '0', '::1', '2020-03-29', '2020-03-29', 0, '', 'omertest@gmail.com', 0),
-(13, 'tesnew', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'testts@gmail.com', 0, '0', '::1', '2020-03-29', '2020-03-29', 0, '', 'testts@gmail.com', 0),
-(14, 'testts', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'test@upwork.com', 0, '0', '::1', '2020-04-29', '2020-04-29', 0, '', 'test@upwork.com', 0),
-(15, 'upwork', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'tests@upwork.com', 0, '0', '::1', '2020-04-29', '2020-04-29', 0, '', 'tests@upwork.com', 0),
-(16, 'Kaveci', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'omerbababs@umib.net', 0, '0', '::1', '2020-05-01', '2020-05-01', 0, '', 'omerbababs@umib.net', 0),
-(17, 'testets', 'dXUyb1lYN1hIWVBuTVluOHVtT2JFZz09', 'omermaksuthfkjdh@gmail.com', 0, '0', '::1', '2020-05-06', '2020-05-06', 0, '', 'omermaksuthfkjdh@gmail.com', 0);
 
 --
 -- Indexes for dumped tables
