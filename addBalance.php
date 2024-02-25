@@ -280,39 +280,45 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Balance</title>
-    <!-- Include any necessary CSS files -->
-</head>
-<body>
-    <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade active in" id="addBalance">
-            <div id="balance" class="container col-lg-6">
-                <h3>Add Balance</h3>
-                <form id="formAddBalance" action="addBalanceAction.php" method="POST">
-                    <div class="row">
-                        <div class="form-group col-lg-12">
-                            <label for="method">Method</label> 
-                            <select name="methodpay" class="form-control" size="3" style="height: 100%;">
-                                <option value="BitcoinPayment" selected="">Bitcoin</option>
-                            </select>
+</nav>    <div id="myTabContent" class="tab-content p-5">
+        <div id="addBalance">
+            <div id="balance">
+                <div class="row">
+                    <div class="container col-md-4" style="color: var(--font-color); background-color: var(--color-card);">
+                        <h4>Add Balance</h4>
+                        <form action="./includes/depositController.php" method="POST" class="mt-2" id="formAddBalance">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="method">Method</label>
+                                    <select name="methodpay" class="form-control" size="5" style="color: var(--font-color); background-color: var(--color-card);">
+                                        <option value="deposit-btn" selected="">Bitcoin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="amount">Amount</label>
+                                    <input placeholder="$25" pattern="[10-199]*" type="number" name="amount" class="form-control input-normal" style="color: var(--font-color); background-color: var(--color-card);" required="$25">
+                                </div>
+                            </div>
+                            <input type="submit" name="deposit-btn" class="btn btn-success btn-md">
+                        </form>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="bs-component">
+                            <div class="well well">
+                                <ul style="color: var(--font-color); background-color: var(--color-card2);">
+                                    <li>If you sent <b>Money</b> but it doesn't appear in your account, please <a class="btn btn-danger btn-sm " href="tickets"><span class="glyphicon glyphicon-pencil"></span> Refresh Your Browser or Raise a Ticket via Our Live Support</a></b></li>
+                                    <li>After payment, funds will be added automatically to your account <b>INSTANTLY</b></li>
+                                    <li><b>PerfectMoney</b>/<b>Bitcoin</b> is a secure way to fund your account </li>
+                                    <li>Min is $25 USD For Bitcoin</li>
+                                    <li>Max is $5000 USD For Bitcoin</li>
+                                    <li><b>Buyer Protection</b></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-                            <label for="amount">Amount</label> 
-                            <input placeholder="20" pattern="[0-9]*" type="text" name="amount" class="form-control input-normal" required="">
-                        </div>
-                    </div>
-                    <button type="submit" id="deposit-btn" class="btn btn-primary btn-md">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
-                </form>
-            </div>
-            <div class="col-lg-6">
-                <!-- Additional content if needed -->
+                </div>
             </div>
         </div>
     </div>
