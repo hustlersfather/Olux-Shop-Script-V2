@@ -16,7 +16,7 @@ if(isset($_POST['deposit-btn'])) {
 
     // Check if the amount is greater than 5
     if($amount > 5) {
-        $api_key = 'YOUR_COINBASE_API_KEY'; // Your Coinbase Commerce API Key
+        $api_key = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Your Coinbase Commerce API Key
 
         // Call Coinbase Commerce API to create a charge
         $curl = curl_init();
