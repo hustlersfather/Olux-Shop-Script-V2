@@ -280,15 +280,22 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav>
-l
+</nav><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Balance</title>
+    <!-- Include any necessary CSS files -->
+</head>
+<body>
     <div id="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="addBalance">
             <div id="balance" class="container col-lg-6">
                 <h3>Add Balance</h3>
-                <form id="formAddBalance">
+                <form id="formAddBalance" action="addBalanceAction.php" method="POST">
                     <div class="row">
-                        <div class="form-group col-lg-12 ">
+                        <div class="form-group col-lg-12">
                             <label for="method">Method</label> 
                             <select name="methodpay" class="form-control" size="3" style="height: 100%;">
                                 <option value="BitcoinPayment" selected="">Bitcoin</option>
@@ -296,53 +303,48 @@ l
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-lg-6 ">
+                        <div class="form-group col-lg-6">
                             <label for="amount">Amount</label> 
                             <input placeholder="20" pattern="[0-9]*" type="text" name="amount" class="form-control input-normal" required="">
                         </div>
                     </div>
-                    <button type="button" id="deposit-btn" class="btn btn-primary btn-md" onclick="submitForm()">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="submit" id="deposit-btn" class="btn btn-primary btn-md">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
                 </form>
             </div>
             <div class="col-lg-6">
-                <div class="bs-component">
-                    <br><br>
-                    <div class="well well">
-                        <ul>
-                            <li>If you sent <b>Money</b> but it doesn't appear in your account please <a class="label label-default" href="tickets.html"><span class="glyphicon glyphicon-pencil"></span> Write Ticket</a></li>
-                            <li>After payment funds will be added automatically to your account <b>INSTANTLY</b></li>
-                            <li><b>PerfectMoney</b>/<b>Bitcoin</b> is a secure way to fund your account</li>
-                            <li>Min is 5 USD For Bitcoin</li>
-                            <li>Min is 10 USD For Perfect Money</li>
-                            <li><b>Buyer Protection</b> - any time you like, you can ask for <b>BALANCE REFUND !</b></li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Additional content if needed -->
             </div>
         </div>
     </div>
 
+    <!-- Include any necessary JavaScript files, libraries, or inline scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function submitForm() {
-            // Serialize form data
-            var formData = $("#formAddBalance").serialize();
+        $(document).ready(function() {
+            $('#formAddBalance').submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
 
-            // Send AJAX request
-            $.ajax({
-                type: "POST",
-                url: "addBalanceAction.php",
-                data: formData,
-                success: function(response) {
-                    // Redirect to payment page
-                    window.location.href = "payment.php";
-                },
-                error: function(xhr, status, error) {
-                    // Handle errors
-                    console.error(error);
-                    alert("Error occurred while processing the form.");
-                }
+                // Serialize form data
+                var formData = $(this).serialize();
+
+                // Send AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: 'addBalanceAction.php',
+                    data: formData,
+                    success: function(response) {
+                        // Handle success, if needed
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error(error);
+                    }
+                });
             });
-        }
+        });
     </script>
+</body>
+</html>
 </body>
 </html>
