@@ -12,10 +12,22 @@ if(!isset($_SESSION['sname']) || $_SESSION['sname'] !== "admin") {
     exit();
 }
 
-$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
-if($usrid !== "freshtools") { 
-    die();
+$adminUsername = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
+
+// Check if the admin's username is "freshtools"
+if($adminUsername !== "freshtools") { 
+    die("Access Denied"); // Or handle unauthorized access as per your requirement
 }
+
+// Modify users table to add freshtools column
+$sql = "ALTER TABLE users ADD COLUMN freshtools int(1) NOT NULL DEFAULT 0";
+if(mysqli_query($dbcon, $sql)) {
+    echo "users table modified successfully.";
+} else {
+    echo "Error modifying users table: " . mysqli_error($dbcon);
+}
+
+// Your admin dashboard content goes here
 ?>
 <!DOCTYPE html>
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
