@@ -2,7 +2,7 @@
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include "./config.php";
+include_once "./includes/config.php";
 
 if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
     header("location: ../");
