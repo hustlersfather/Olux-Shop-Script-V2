@@ -31,7 +31,7 @@ $query = mysqli_query($dbcon, "SELECT DISTINCT(`country`) FROM `smtps` WHERE `so
 	while($row = mysqli_fetch_assoc($query)){
 	echo '<option value="'.$row['country'].'">'.$row['country'].'</option>';
 	}
-?>
+?> 
 </select></td><td><select class='filterselect form-control input-sm' name="smtp_webmail"><option value="">ALL</option><option value="no">no</option><option value="yes">yes</option></select></td><td><input class='filterinput form-control input-sm' name="smtp_hosting" size='3'></td><td><select class='filterselect form-control input-sm' name="smtp_seller"><option value="">ALL</option>
 <?php
 $query = mysqli_query($dbcon, "SELECT DISTINCT(`resseller`) FROM `smtps` WHERE `sold` = '0' ORDER BY resseller ASC");
