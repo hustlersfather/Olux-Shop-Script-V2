@@ -1,8 +1,9 @@
-<?php
+
+    <?php
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include "./config.php";
+include "includes/config.php";
 
 if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
     header("location: ../");
@@ -47,30 +48,29 @@ if(isset($_POST['deposit-btn'])) {
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
+    $charge_data = json_decode($response, true);
 
-        $charge_data = json_decode($response, true);
+    if(isset($charge_data['data']['code'])) {
+        $charge_code = $charge_data['data']['code'];
+        $charge_address = $charge_data['data']['addresses']['bitcoin'];
+        $charge_id = $charge_data['data']['id'];
 
-        if(isset($charge_data['data']['code'])) {
-            $charge_code = $charge_data['data']['code'];
-            $charge_address = $charge_data['data']['addresses']['bitcoin'];
-            $charge_id = $charge_data['data']['id'];
+        // Store payment details in the database
+        $insert_query = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('$uid', '$method', '$charge_address', '$charge_code', $amount, $amount)";
+        mysqli_query($dbcon, $insert_query);
 
-            // Store payment details in the database
-            $insert_query = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('$uid', '$method', '$charge_address', '$charge_code', $amount, $amount)";
-            mysqli_query($dbcon, $insert_query);
-
-            // Redirect the user to the payment redirection page with payment data
-            header("Location: payment.php?address=$charge_address&amount=$amount");
-            exit();
-        } else {
-            // Handle API error
-            echo "Error occurred while processing payment.";
-        }
+        // Redirect the user to the payment redirection page with payment data
+        header("Location: payment.php?address=$charge_address&amount=$amount");
+        exit();
     } else {
-        // Handle amount less than 5 error
-        echo "Amount should be greater than 5 USD for Bitcoin payments.";
+        // Handle API error
+        echo "Error occurred while processing payment.";
     }
+} else {
+    // Handle amount less than 5 error
+    echo "Amount should be greater than 5 USD for Bitcoin payments.";
+}
+
 }
 ?>
