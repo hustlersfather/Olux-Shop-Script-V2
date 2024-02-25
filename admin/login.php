@@ -6,7 +6,7 @@ ob_start();
 date_default_timezone_set('UTC');
 
 include "../includes/config.php";
-include "../includes/encrypt.php";
+include "../encrypt.php";
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($dbcon, $_POST['username']);
