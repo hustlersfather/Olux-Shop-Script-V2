@@ -5,9 +5,9 @@ function dec_enc($action, $string) {
  
     $encrypt_method = "AES-256-CBC";
     // KEY
-    $secret_key = 'Omeri1233Omeri';
+    $secret_key = 'xbasetools';
     // SALT
-    $secret_iv = 'Omeri1233Omeri'; // qita veq key
+    $secret_iv = 'xbasetools'; // qita veq key
  
     // hash
     $key = hash('sha256', $secret_key);
