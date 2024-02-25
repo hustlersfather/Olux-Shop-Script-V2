@@ -10,26 +10,20 @@ if(isset($_SESSION['sname']) and isset($_SESSION['spass'])){
 }
 
 if (isset($_POST['username'],$_POST['email'],$_POST['password_signup'],$_POST['password_signup2'])) {
-    $uname = strip_tags($_POST['username']);
-    $email = strip_tags($_POST['email']);
-    $pass1 = strip_tags($_POST['password_signup']);
-    $pass2 = strip_tags($_POST['password_signup2']);
+    $uname = mysqli_real_escape_string($dbcon, strip_tags($_POST['username']));
+    $email = mysqli_real_escape_string($dbcon, strip_tags($_POST['email']));
+    $pass1 = mysqli_real_escape_string($dbcon, strip_tags($_POST['password_signup']));
+    $pass2 = mysqli_real_escape_string($dbcon, strip_tags($_POST['password_signup2']));
     $ip    = getenv("REMOTE_ADDR");
     $rdate = date("y-m-d");
     $lvisi = date('y-m-d');
 
     $passstrlen = strlen($pass1);
 
-    $stmt = mysqli_prepare($dbcon, "SELECT * FROM users WHERE username=?");
-    mysqli_stmt_bind_param($stmt, "s", $uname);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_query($dbcon, "SELECT * FROM users WHERE username='".$uname."'");
     $userexist = mysqli_num_rows($result);
 
-    $stmt = mysqli_prepare($dbcon, "SELECT * FROM users WHERE email=?");
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_query($dbcon, "SELECT * FROM users WHERE email='".$email."'");
     $emailexist = mysqli_num_rows($result);
 
     if(empty($uname) or empty($email) or empty($pass1) or empty($pass2)){
@@ -50,26 +44,25 @@ if (isset($_POST['username'],$_POST['email'],$_POST['password_signup'],$_POST['p
     }elseif($passstrlen <6 or $passstrlen > 16){
         header('location:signup.html?error=passlength');
         exit;
-    }elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    }elseif(!preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i",$email)){
         $errorbox = "<div class='alert alert-dismissible alert-info'><button type='button' class='close' data-dismiss='alert'>×</button><p>Invalid email!</p></div>";
         echo '{"state":"0","errorbox":"'.$errorbox.'","url":""}';
     }else{
-        $password = password_hash($pass1, PASSWORD_DEFAULT);
+        $password = $pass1;
 
-        $stmt = mysqli_prepare($dbcon, "INSERT INTO users
-        (username,password,email,balance,ipurchassed,ip,lastlogin,datereg,resseller,img,testemail,resetpin)
-        VALUES
-        (?,?,?,?,?,?,?,?,?,?,?,?)");
-        mysqli_stmt_bind_param($stmt, "sssssssssssi", $uname, $password, $email, $balance, $ipurchassed, $ip, $lvisi, $rdate, $resseller, $img, $email, $resetpin);
-        mysqli_stmt_execute($stmt);
+        $insert = mysqli_query($dbcon, "INSERT INTO users
+            (username,password,email,balance,ipurchassed,ip,lastlogin,datereg,resseller,img,testemail,resetpin)
+            VALUES
+            ('$uname','$password','$email','0','0','$ip','$lvisi','$rdate','0','','$email',0)") or die(mysqli_error($dbcon));
 
         header('location:login.html?success=register');
         exit;
     }
-    mysqli_close($dbcon);
-    ob_end_flush();
 } else {
     header('location:index.html');
     exit;
 }
+
+mysqli_close($dbcon);
+ob_end_flush();
 ?>
