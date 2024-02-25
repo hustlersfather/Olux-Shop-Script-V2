@@ -281,8 +281,9 @@ if ($r1 == "1") {
   </div>
   <!-- /.container-fluid -->
 </nav>
+<div id="mainDiv">
 <?php
-require_once "divPage0.php" ?><div id="mainDiv">
+require_once "divPage0.php" ?>
 
 
 </div>
