@@ -1,4 +1,4 @@
 <?php
 
- echo password_hash('omeri1234', PASSWORD_DEFAULT);
+ echo password_hash('xbasetools6336', PASSWORD_DEFAULT);
  ?>
