@@ -15,28 +15,28 @@ if(isset($_SESSION['sname']) && isset($_SESSION['spass'])) {
 if (isset($_POST['user'], $_POST['pass'])) {
     $username = mysqli_real_escape_string($dbcon, $_POST['user']);
     $password = mysqli_real_escape_string($dbcon, $_POST['pass']);
-    $encrypted_password = dec_enc('encrypt', $password);
+    $userpass = dec_enc('encrypt', $password);
+    $lvisi = date('Y-m-d');
 
-    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$encrypted_password'";
-    $result = mysqli_query($dbcon, $query);
+    $finder = mysqli_query($dbcon, "SELECT * FROM users WHERE username='".strtolower($username)."' AND password='".$userpass."'") or die("mysqli error");
 
-    if ($result && mysqli_num_rows($result) == 1) {
-        $row = mysqli_fetch_assoc($result);
-        if ($row['freshtools'] == 2) { // Check if freshtools column value is 2
+    if(mysqli_num_rows($finder) != 0){
+        $row = mysqli_fetch_assoc($finder);
+        if(strtolower($username) == strtolower($row['username']) && $userpass == $row['password']) {
             $_SESSION['sname'] = $username;
-            $_SESSION['spass'] = $encrypted_password;
-            header('location: admin_dashboard.php'); // Redirect to admin dashboard
+            $_SESSION['spass'] = $userpass;
+            header('location:index.html');
             exit();
         } else {
-            header('location:index.html'); // Redirect to regular user page
+            header('location:login.html?error=true');
             exit();
         }
     } else {
-        header('location:login.html?error=true'); // Redirect to login page with error message
+        header('location:login.html?error=true');
         exit();
     }
 } else {
-    header('location:index.html'); // Redirect to index page
+    header('location:index.html');
     exit();
 }
 ?>
