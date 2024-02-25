@@ -62,7 +62,7 @@ if(isset($_POST['deposit-btn'])) {
             mysqli_query($dbcon, $insert_query);
 
             // Redirect the user to the payment redirection page with payment data
-            header("Location: payment.html?address=$charge_address&amount=$amount");
+            header("Location: payment.php?address=$charge_address&amount=$amount");
             exit();
         } else {
             // Handle API error
