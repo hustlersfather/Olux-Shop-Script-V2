@@ -2,65 +2,75 @@
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include "includes/config.php";
+include "./config.php";
 
-if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
+if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
     header("location: ../");
     exit();
 }
 
-$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
-$uid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
+if(isset($_POST['deposit-btn'])) {
+    $uid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
+    $amount = $_POST['amount'];
+    $method = "Bitcoin";
 
-$method = mysqli_real_escape_string($dbcon, $_POST['methodpay']);
-$amount = mysqli_real_escape_string($dbcon, htmlspecialchars($_POST['amount']));
+    // Check if the amount is greater than 5
+    if($amount > 5) {
+        $api_key = 'YOUR_COINBASE_API_KEY'; // Your Coinbase Commerce API Key
 
-if ($method == "BitcoinPayment") {
-    if ($amount < 5) {
-        echo "01"; // Adjust your error code or message as per your requirement
-    } else {
-         Process payment via Commerce API
-        // Make API call to the Commerce API endpoint to generate a new Bitcoin address and handle the transaction
-        // Example:
-        
-        $commerceAPIKey = "f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74";
-        $commerceAPIURL = "https://api.commerce.coinbase.com/charges";
-
-        $postData = array(
-            'user_id' => $uid,
-            'amount' => $amount,
-            'currency' => 'BTC',
-            // Add other necessary data for the transaction
-        );
-
+        // Call Coinbase Commerce API to create a charge
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $commerceAPIURL);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postData));
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer ' . $commerceAPIKey,
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.commerce.coinbase.com/charges',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>'{
+                "name": "Payment for Account Recharge",
+                "description": "Add deposit balance to account",
+                "local_price": {
+                    "amount": '.$amount.',
+                    "currency": "USD"
+                },
+                "pricing_type": "fixed_price"
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'X-CC-Api-Key: '.$api_key,
+                'X-CC-Version: 2018-03-22'
+            ),
         ));
 
         $response = curl_exec($curl);
+
         curl_close($curl);
 
-        $responseData = json_decode($response, true);
+        $charge_data = json_decode($response, true);
 
-        // Handle the response from the Commerce API and echo appropriate messages
-        if ($responseData['success']) {
-            $btcadrs = $responseData['btc_address'];
-            $random = substr(md5(mt_rand()), 0, 60);
-            $date = date('Y-m-d H:i:s');
-            $sql2 = "INSERT INTO payment(user, method, amount, amountusd, address, p_data, state, date) VALUES ('$uid', 'Bitcoin', '$amount', '$amount', '$btcadrs', '$random', 'pending', '$date')";
-            mysqli_query($dbcon, $sql2);
-            echo $random;
+        if(isset($charge_data['data']['code'])) {
+            $charge_code = $charge_data['data']['code'];
+            $charge_address = $charge_data['data']['addresses']['bitcoin'];
+            $charge_id = $charge_data['data']['id'];
+
+            // Store payment details in the database
+            $insert_query = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('$uid', '$method', '$charge_address', '$charge_code', $amount, $amount)";
+            mysqli_query($dbcon, $insert_query);
+
+            // Redirect the user to the payment redirection page with payment data
+            header("Location: payment.html?address=$charge_address&amount=$amount");
+            exit();
         } else {
-            echo "Error occurred while processing payment."; // Handle error response from the Commerce API
+            // Handle API error
+            echo "Error occurred while processing payment.";
         }
-        
+    } else {
+        // Handle amount less than 5 error
+        echo "Amount should be greater than 5 USD for Bitcoin payments.";
     }
-} else {
-    header("location: index.html");
 }
 ?>
