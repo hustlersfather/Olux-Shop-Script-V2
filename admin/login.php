@@ -1,4 +1,3 @@
-
 <?php
 // login_process.php
 session_start();
@@ -7,13 +6,20 @@ ob_start();
 date_default_timezone_set('UTC');
 
 include "../includes/config.php";
+include "../includes/encrypt.php";
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($dbcon, $_POST['username']);
     $password = mysqli_real_escape_string($dbcon, $_POST['password']);
 
+    // Encrypt the entered password for comparison
+    $encrypted_password = dec_enc('encrypt', $password);
+
     // Perform your authentication here, for example:
-    if($username === "admin" && $password === "admin_password") {
+    $query = "SELECT * FROM manager WHERE username = '$username' AND password = '$encrypted_password'";
+    $result = mysqli_query($dbcon, $query);
+
+    if(mysqli_num_rows($result) == 1) {
         $_SESSION['sname'] = $username;
         header("location: admin_dashboard.php");
         exit();
