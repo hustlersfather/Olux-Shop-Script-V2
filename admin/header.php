@@ -1,20 +1,21 @@
 <?php
+// admin_dashboard.php
 session_start();
 ob_start();
 
 date_default_timezone_set('UTC');
 
-
 include "../includes/config.php";
 
-if(!isset($_SESSION['sname']) and !isset($_SESSION['sname'])){
-   header("location: ../login.html");
-   exit();
+if(!isset($_SESSION['sname']) || $_SESSION['sname'] !== "admin") {
+    header("location: ../login.html");
+    exit();
 }
-// $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
-// if($usrid !== "freshtools") {
-// 	die();
-// }
+
+$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
+if($usrid !== "freshtools") { 
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
