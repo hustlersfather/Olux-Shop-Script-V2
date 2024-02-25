@@ -10,14 +10,16 @@ if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
 }
 $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 $p_data = mysqli_real_escape_string($dbcon, $_GET['p_data']);
-?>
-<!doctype html>
-<html>
+?><!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
 <link rel="stylesheet" type="text/css" href="files/bootstrap/3/css/bootstrap.css?1" />
 <link rel="stylesheet" type="text/css" href="files/css/flags.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
-<script type="text/javascript" src="files/js/jquery.js?1"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/nF+3oq4R9znTL9SRF46Y4QKJpU7nQ1bGaP3b6SyXz0=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="files/bootstrap/3/js/bootstrap.js?1"></script>
 <script type="text/javascript" src="files/js/sorttable.js"></script>
 <script type="text/javascript" src="files/js/table-head.js?3334"></script>
@@ -281,10 +283,44 @@ if ($r1 == "1") {
   </div>
   <!-- /.container-fluid -->
 </nav>
-<div id="mainDiv">
-
-
+<div class="container">
+    <h2>Payment Details</h2>
+    <div id="paymentDetails">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- You can display payment details dynamically using JavaScript -->
+    </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // Retrieve charge code from URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var chargeCode = urlParams.get('p_data');
+
+        // Fetch payment details using the charge code
+        $.ajax({
+            type: "GET",
+            url: 'getPaymentDetails.php', // Assuming you have a script to fetch payment details based on charge code
+            data: { charge_code: chargeCode },
+            success: function(data) {
+                $('#paymentDetails').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                $('#paymentDetails').html('<p>Error retrieving payment details.</p>');
+            }
+        });
+    });
+</script>
 </body>
 </html>
 
