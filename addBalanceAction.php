@@ -1,9 +1,8 @@
-
-    <?php
+<?php
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include "includes/config.php";
+include "./config.php";
 
 if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
     header("location: ../");
@@ -15,62 +14,13 @@ if(isset($_POST['deposit-btn'])) {
     $amount = $_POST['amount'];
     $method = "Bitcoin";
 
-    // Check if the amount is greater than 5
-    if($amount > 5) {
-        $api_key = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Your Coinbase Commerce API Key
-
-        // Call Coinbase Commerce API to create a charge
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.commerce.coinbase.com/charges',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-                "name": "Payment for Account Recharge",
-                "description": "Add deposit balance to account",
-                "local_price": {
-                    "amount": '.$amount.',
-                    "currency": "USD"
-                },
-                "pricing_type": "fixed_price"
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'X-CC-Api-Key: '.$api_key,
-                'X-CC-Version: 2018-03-22'
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-    $charge_data = json_decode($response, true);
-
-    if(isset($charge_data['data']['code'])) {
-        $charge_code = $charge_data['data']['code'];
-        $charge_address = $charge_data['data']['addresses']['bitcoin'];
-        $charge_id = $charge_data['data']['id'];
-
-        // Store payment details in the database
-        $insert_query = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('$uid', '$method', '$charge_address', '$charge_code', $amount, $amount)";
-        mysqli_query($dbcon, $insert_query);
-
-        // Redirect the user to the payment redirection page with payment data
-        header("Location: payment.php?address=$charge_address&amount=$amount");
-        exit();
+    // Your code to process the form submission and store data in the database
+    // Example:
+    $insertQuery = "INSERT INTO payment (user, method, amount) VALUES ('$uid', '$method', '$amount')";
+    if(mysqli_query($dbcon, $insertQuery)) {
+        echo "Data successfully inserted into the database.";
     } else {
-        // Handle API error
-        echo "Error occurred while processing payment.";
+        echo "Error: " . mysqli_error($dbcon);
     }
-} else {
-    // Handle amount less than 5 error
-    echo "Amount should be greater than 5 USD for Bitcoin payments.";
-}
-
 }
 ?>
