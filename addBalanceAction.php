@@ -2,7 +2,7 @@
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include "../includes/config.php";
+include "includes/config.php";
 
 if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
     header("location: ../");
@@ -19,12 +19,12 @@ if ($method == "BitcoinPayment") {
     if ($amount < 5) {
         echo "01"; // Adjust your error code or message as per your requirement
     } else {
-        // Process payment via Commerce API
+         Process payment via Commerce API
         // Make API call to the Commerce API endpoint to generate a new Bitcoin address and handle the transaction
         // Example:
-        /*
-        $commerceAPIKey = "your_commerce_api_key";
-        $commerceAPIURL = "https://yourcommerceapi.com/api/create_transaction";
+        
+        $commerceAPIKey = "f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74";
+        $commerceAPIURL = "https://api.commerce.coinbase.com/charges";
 
         $postData = array(
             'user_id' => $uid,
@@ -58,7 +58,7 @@ if ($method == "BitcoinPayment") {
         } else {
             echo "Error occurred while processing payment."; // Handle error response from the Commerce API
         }
-        */
+        
     }
 } else {
     header("location: index.html");
