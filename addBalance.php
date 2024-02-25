@@ -281,6 +281,7 @@ if ($r1 == "1") {
   </div>
   <!-- /.container-fluid -->
 </nav>
+l
     <div id="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="addBalance">
             <div id="balance" class="container col-lg-6">
@@ -291,7 +292,6 @@ if ($r1 == "1") {
                             <label for="method">Method</label> 
                             <select name="methodpay" class="form-control" size="3" style="height: 100%;">
                                 <option value="BitcoinPayment" selected="">Bitcoin</option>
-                                <option value="PerfectMoneyPayment">Perfect Money</option>
                             </select>
                         </div>
                     </div>
@@ -301,7 +301,7 @@ if ($r1 == "1") {
                             <input placeholder="20" pattern="[0-9]*" type="text" name="amount" class="form-control input-normal" required="">
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary btn-md" onclick="submitForm()">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="button" id="deposit-btn" class="btn btn-primary btn-md" onclick="submitForm()">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
                 </form>
             </div>
             <div class="col-lg-6">
@@ -309,12 +309,12 @@ if ($r1 == "1") {
                     <br><br>
                     <div class="well well">
                         <ul>
-                            <li>If you sent <b>Money</b> but it don't appear in your account please <a class="label label-default " href="tickets.html"><span class="glyphicon glyphicon-pencil"></span> Write Ticket</a></b></li>
+                            <li>If you sent <b>Money</b> but it doesn't appear in your account please <a class="label label-default" href="tickets.html"><span class="glyphicon glyphicon-pencil"></span> Write Ticket</a></li>
                             <li>After payment funds will be added automatically to your account <b>INSTANTLY</b></li>
-                            <li><b>PerfectMoney</b>/<b>Bitcoin</b> is a secure way to fund your account </li>
+                            <li><b>PerfectMoney</b>/<b>Bitcoin</b> is a secure way to fund your account</li>
                             <li>Min is 5 USD For Bitcoin</li>
                             <li>Min is 10 USD For Perfect Money</li>
-                            <li><b>Buyer Protection</b> - any time you like , you can ask for <b>BALANCE REFUND !</b></li>
+                            <li><b>Buyer Protection</b> - any time you like, you can ask for <b>BALANCE REFUND !</b></li>
                         </ul>
                     </div>
                 </div>
@@ -334,7 +334,7 @@ if ($r1 == "1") {
                 data: formData,
                 success: function(response) {
                     // Redirect to payment page
-                    window.location.href = "payment.html";
+                    window.location.href = "payment.php";
                 },
                 error: function(xhr, status, error) {
                     // Handle errors
@@ -346,6 +346,3 @@ if ($r1 == "1") {
     </script>
 </body>
 </html>
-</body>
-</html>
-
