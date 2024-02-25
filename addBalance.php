@@ -1,4 +1,4 @@
-<?php
+=<?php
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
@@ -9,14 +9,16 @@ if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
     exit();
 }
 $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
-?>
-<!doctype html>
-<html>
+?><!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Balance</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="files/bootstrap/3/css/bootstrap.css?1" />
 <link rel="stylesheet" type="text/css" href="files/css/flags.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
-<script type="text/javascript" src="files/js/jquery.js?1"></script>
 <script type="text/javascript" src="files/bootstrap/3/js/bootstrap.js?1"></script>
 <script type="text/javascript" src="files/js/sorttable.js"></script>
 <script type="text/javascript" src="files/js/table-head.js?3334"></script>
@@ -279,10 +281,71 @@ if ($r1 == "1") {
   </div>
   <!-- /.container-fluid -->
 </nav>
-<div id="mainDiv">
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="addBalance">
+            <div id="balance" class="container col-lg-6">
+                <h3>Add Balance</h3>
+                <form id="formAddBalance">
+                    <div class="row">
+                        <div class="form-group col-lg-12 ">
+                            <label for="method">Method</label> 
+                            <select name="methodpay" class="form-control" size="3" style="height: 100%;">
+                                <option value="BitcoinPayment" selected="">Bitcoin</option>
+                                <option value="PerfectMoneyPayment">Perfect Money</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-lg-6 ">
+                            <label for="amount">Amount</label> 
+                            <input placeholder="20" pattern="[0-9]*" type="text" name="amount" class="form-control input-normal" required="">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-md" onclick="submitForm()">Add Balance <span class="glyphicon glyphicon-plus"></span></button>
+                </form>
+            </div>
+            <div class="col-lg-6">
+                <div class="bs-component">
+                    <br><br>
+                    <div class="well well">
+                        <ul>
+                            <li>If you sent <b>Money</b> but it don't appear in your account please <a class="label label-default " href="tickets.html"><span class="glyphicon glyphicon-pencil"></span> Write Ticket</a></b></li>
+                            <li>After payment funds will be added automatically to your account <b>INSTANTLY</b></li>
+                            <li><b>PerfectMoney</b>/<b>Bitcoin</b> is a secure way to fund your account </li>
+                            <li>Min is 5 USD For Bitcoin</li>
+                            <li>Min is 10 USD For Perfect Money</li>
+                            <li><b>Buyer Protection</b> - any time you like , you can ask for <b>BALANCE REFUND !</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        function submitForm() {
+            // Serialize form data
+            var formData = $("#formAddBalance").serialize();
 
-</div>
+            // Send AJAX request
+            $.ajax({
+                type: "POST",
+                url: "addBalanceAction.php",
+                data: formData,
+                success: function(response) {
+                    // Redirect to payment page
+                    window.location.href = "payment.html";
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error(error);
+                    alert("Error occurred while processing the form.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
 </body>
 </html>
 
