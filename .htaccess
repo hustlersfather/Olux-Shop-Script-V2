@@ -1,3 +1,37 @@
+
+
+ErrorDocument 404 /index.html
+RewriteEngine on
+Options -Indexes
+RewriteRule ^index.php$  index.php
+RewriteRule ^signup$  signup.php
+RewriteRule ^forget$  forget.php
+RewriteRule ^reset$  resetpass.php
+RewriteRule ^login$  login.php
+RewriteRule ^loginpage1.php$  loginpage1.php
+RewriteRule ^loginpage2.php$  loginpage2.php
+RewriteRule ^loginpage3.php$  loginpage3.php
+RewriteRule ^loginform.php$  loginform.php
+RewriteRule ^signupform.php$  signupform.php
+RewriteRule ^passform.php$  passform.php
+RewriteRule ^index.php$  index.php
+RewriteRule ^ajaxinfo.php$  ajax.php
+RewriteRule ^mailer$  mailer.php
+RewriteRule ^shell$  shell.php
+RewriteRule ^leads$  leads.php
+RewriteRule ^premium$  premium.php
+RewriteRule ^addBalance$  addBalance.php
+RewriteRule ^divPage1.php$  divPage1.php
+RewriteRule ^divPage2.php$  divPage2.php
+RewriteRule ^divPage3.php$  divPage3.php
+RewriteRule ^divPage4.php$  divPage4.php
+RewriteRule ^divPage5.php$  divPage5.php
+RewriteRule ^divPage6.php$  divPage6.php
+RewriteRule ^divPage7.php$  divPage7.php
+RewriteRule ^divPage8.php$  divPage8.php
+RewriteRule ^divPage9.php$  divPage9.php
+RewriteRule ^divPage10.php$  divPage10.php
+RewriteRule ^divPage11.php$  divPage11.php
 ErrorDocument 404 /index.html
 RewriteEngine on
 Options -Indexes
