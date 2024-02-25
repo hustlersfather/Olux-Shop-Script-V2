@@ -53,53 +53,43 @@ if (mysqli_num_rows($q) > 0) {
                     </ul>
                 </div>
             </div>
-        </div>
-        <div id="error" class="form-group col-lg-5 "></div>
-        <script type="text/javascript">
-            // JavaScript code for handling payment status, etc.
-        </script>
-        <?php
-    } else {
-        // Redirect to index.html if payment method is not Bitcoin (e.g., PerfectMoney)
-        header('Location: index.html');
-    }
-} else {
-    // Handle case where payment details are not found
-    echo "Payment details not found.";
-}
-?>
-
-<div id="error" class="form-group col-lg-5 "></div>
+        </div> 
+<div id="error" class="form-group col-lg-5"></div>
 <script type="text/javascript">
-var Check_BTC_x = true;
-function check_address(){
-      $("#Img").html('<img src="files/img/load.gif" height="15" width="15">').show();
-      $.ajax({
-      type:       'GET',
-      url:        'Check.html?p_data=<?php echo $p_data; ?>',
-           success: function(data)
-           {         
-              var data = JSON.parse(data);
-              $("#time").html(data['time'] ).show();
-              $("#amount").html(data['btc'] ).show();
-              $("#state").html(data['state'] ).show();
-              $("#Img").html('').show();
-              if (data['error'] == 1) {$("#error").html(data['errorTXT'] ).show();}
-              if (data['stop'] == 1) {stopCheckBTC();}
+    var Check_BTC_x = true;
 
-           }
-         });
+    function check_address() {
+        $("#Img").html('<img src="files/img/load.gif" height="15" width="15">').show();
+        $.ajax({
+            type: 'GET',
+            url: 'Check.html?p_data=<?php echo $p_data; ?>',
+            success: function(data) {
+                var data = JSON.parse(data);
+                $("#time").html(data['time']).show();
+                $("#amount").html(data['btc']).show();
+                $("#state").html(data['state']).show();
+                $("#Img").html('').show();
+                if (data['error'] == 1) {
+                    $("#error").html(data['errorTXT']).show();
+                }
+                if (data['stop'] == 1) {
+                    stopCheckBTC();
+                }
+            }
+        });
+    }
 
-  }
-var x23 = 10000;
-var Check_BTC = setInterval(function(){check_address()}, x23);
+    var x23 = 10000;
+    var Check_BTC = setInterval(function() {
+        check_address();
+    }, x23);
 
-function stopCheckBTC(){
-  if (Check_BTC){
-  clearInterval(Check_BTC);
-  }
-  return true;
-}
+    function stopCheckBTC() {
+        if (Check_BTC) {
+            clearInterval(Check_BTC);
+        }
+        return true;
+    }
 
     function selectText(containerid) {
         if (document.selection) {
@@ -113,7 +103,13 @@ function stopCheckBTC(){
         }
     }
 </script>
- 
-<?php
-	} } 
+        <?php
+    } else {
+        // Redirect to index.html if payment method is not Bitcoin (e.g., PerfectMoney)
+        header('Location: index.html');
+    }
+} else {
+    // Handle case where payment details are not found
+    echo "Payment details not found.";
+}
 ?>
