@@ -1,6 +1,89 @@
 ErrorDocument 404 /index.html
 RewriteEngine on
 Options -Indexes
+RewriteRule ^index.php$  index.php
+RewriteRule ^signup.php$  signup.php
+RewriteRule ^forget.php$  forget.php
+RewriteRule ^reset.php$  resetpass.php
+RewriteRule ^login.php$  login.php
+RewriteRule ^loginpage1.php$  loginpage1.php
+RewriteRule ^loginpage2.php$  loginpage2.php
+RewriteRule ^loginpage3.php$  loginpage3.php
+RewriteRule ^loginform.php$  loginform.php
+RewriteRule ^signupform.php$  signupform.php
+RewriteRule ^passform.php$  passform.php
+RewriteRule ^index.php$  index.php
+RewriteRule ^ajaxinfo.php$  ajax.php
+RewriteRule ^mailer.php$  mailer.php
+RewriteRule ^shell.php$  shell.php
+RewriteRule ^leads.php$  leads.php
+RewriteRule ^premium.php$  premium.php
+RewriteRule ^addBalance.php$  addBalance.php
+RewriteRule ^divPage1.php$  divPage1.php
+RewriteRule ^divPage2.php$  divPage2.php
+RewriteRule ^divPage3.php$  divPage3.php
+RewriteRule ^divPage4.php$  divPage4.php
+RewriteRule ^divPage5.php$  divPage5.php
+RewriteRule ^divPage6.php$  divPage6.php
+RewriteRule ^divPage7.php$  divPage7.php
+RewriteRule ^divPage8.php$  divPage8.php
+RewriteRule ^divPage9.php$  divPage9.php
+RewriteRule ^divPage10.php$  divPage10.php
+RewriteRule ^divPage11.php$  divPage11.php
+RewriteRule ^divPage12.php$  divPage12.php
+RewriteRule ^divPage13.php$  divPage13.php
+RewriteRule ^divPage14.php$  divPage14.php
+RewriteRule ^divPage15.php$  divPage15.php
+RewriteRule ^divPage0.php$  divPage0.php
+RewriteRule ^settingEdit.php$  settingEdit.php
+RewriteRule ^CreateTicket.php$  tticket.php
+RewriteRule ^CreateReport.php$  treport.php
+RewriteRule ^addBalance.php$  funds.php
+RewriteRule ^addBalanceAction.php$  addBalanceAction.php
+RewriteRule ^rdp.php$  rdp.php
+RewriteRule ^tutorial.php$  tutorial.php
+RewriteRule ^MakePayment.php$  pay.php
+RewriteRule ^BitcoinPayment.php$  btc3.php
+RewriteRule ^banks.php$  banks.php
+RewriteRule ^PerfectMoneyPayment.php$  pm3.php
+RewriteRule ^tickets.php$  tickets.php
+RewriteRule ^seller.php$  becomeseller.php
+RewriteRule ^scampage.php$  scampage.php
+RewriteRule ^logout.php$  logout.php
+RewriteRule ^active.php$  active.php
+RewriteRule ^orders.php$  orders.php
+RewriteRule ^setting.php$  setting.php
+RewriteRule ^static.php$  static.php
+RewriteRule ^seller.php$  rindex.php
+RewriteRule ^smtp.php$  smtp.php
+RewriteRule ^AddSingleTool.php$  addt.php
+RewriteRule ^cPanel.php$  cPanel.php
+RewriteRule ^checkEmailChange.php$  checkEmailChange.php
+RewriteRule ^reports.php$  reports.php
+RewriteRule ^Rules.php$  shoprules.php
+RewriteRule ^account.php$  profile.php
+RewriteRule ^AddCards.php$  addc.php
+RewriteRule ^vt-(.*).php$ vt.php?id=$1
+RewriteRule ^vr-(.*).php$ vr.php?id=$1
+RewriteRule ^divPageticket(.*).php$ divPageticket.php?id=$1
+RewriteRule ^divPagereport(.*).php$ divPagereport.php?id=$1
+RewriteRule ^showTicket(.*).php$ showTicket.php?id=$1
+RewriteRule ^CheckShell(.*).php$ check2shell.php?id=$1
+RewriteRule ^CheckSMTP(.*).php$ check2smtp.php?id=$1
+RewriteRule ^CheckCpanel(.*).php$ check2cp.php?id=$1
+RewriteRule ^CheckMailer(.*).php$ check2mailer.php?id=$1
+RewriteRule ^showOrder(.*).php$ openorder.php?id=$1
+RewriteRule ^addReply(.*).php$ addReply.php?id=$1
+RewriteRule ^addReportReply(.*).php$ addReportReply.php?id=$1
+RewriteRule ^divPagepayment(.*).php$ divPagepayment.php?p_data=$1
+RewriteRule ^Check.php$ check.php
+RewriteRule ^PMCheck.php$ PMcheck.php
+RewriteRule ^Payment.php$ payment.php
+
+
+ErrorDocument 404 /index.html
+RewriteEngine on
+Options -Indexes
 RewriteRule ^index.html$  index.php
 RewriteRule ^signup.html$  signup.php
 RewriteRule ^forget.html$  forget.php
@@ -190,3 +273,4 @@ RewriteCond %{QUERY_STRING} (;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|uni
 RewriteCond %{QUERY_STRING} (sp_executesql) [NC]
 
 RewriteRule ^(.*)$ - [F,L]
+
