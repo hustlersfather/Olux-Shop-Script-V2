@@ -287,9 +287,9 @@ if ($r1 == "1") {
                     <div class="container col-md-4" style="color: var(--font-color); background-color: var(--color-card);">
                         <h4>Add Balance</h4>
                         <form action="./addBalanceAction.php" method="POST" class="mt-2" id="formAddBalance">
-                         <label for="balance">Enter Balance Amount:</label><br>
-                          <input type="text" id="balance" name="balance" required><br><br>
-                        <input type="submit" value="Submit">
+        <label for="balance">Enter Balance Amount:</label><br>
+        <input type="text" id="balance" name="balance" required><br><br>
+        <input type="submit" name="add-balance-btn" value="Add Balance">
     </form>
 </div>
                     <div class="col-md-8">
