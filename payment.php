@@ -282,9 +282,7 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav> <?php
-// add_balance_success.php
-
+</nav><?php
 session_start();
 require_once "includes/config.php";
 
@@ -307,12 +305,23 @@ if ($result && mysqli_num_rows($result) > 0) {
     $wallet_address = "Wallet address not found";
 }
 
-// Function to generate QR code for the wallet address using Coinbase Commerce API
-function generate_qr_code($wallet_address) {
-    // You need to implement your logic to generate a QR code using the Coinbase Commerce API
-    // This may involve calling a specific endpoint provided by the Coinbase Commerce platform
-    // For demonstration purposes, return a placeholder image URL
-    return "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($wallet_address);
+// Function to generate QR code for the wallet address using Google's QR Code API
+function generate_qr_code($walletAddress) {
+    // Base URL for Google's QR Code API
+    $baseUrl = 'https://chart.googleapis.com/chart';
+
+    // Parameters for generating the QR code
+    $params = array(
+        'chs' => '300x300', // QR code size (300x300 pixels)
+        'cht' => 'qr', // QR code chart type
+        'chl' => urlencode($walletAddress), // QR code data (wallet address)
+    );
+
+    // Construct the full URL with parameters
+    $qrCodeUrl = $baseUrl . '?' . http_build_query($params);
+
+    // Return the URL to the generated QR code
+    return $qrCodeUrl;
 }
 ?>
 
@@ -328,7 +337,8 @@ function generate_qr_code($wallet_address) {
     <p>Your balance has been added successfully!</p>
     <p>Your wallet address:</p>
     <p><?php echo $wallet_address; ?></p>
-    <p>Wallet QR Code:</p>
-    <img src="<?php echo generate_qr_code($wallet_address); ?>" alt="Wallet QR Code">
+    <?php if ($wallet_address !== "Wallet address not found"): ?>
+        <img src="<?php echo generate_qr_code($wallet_address); ?>" alt="Wallet QR Code">
+    <?php endif; ?>
 </body>
 </html>
