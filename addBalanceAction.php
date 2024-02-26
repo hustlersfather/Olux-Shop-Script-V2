@@ -110,4 +110,23 @@ if (isset($_POST['add-balance-btn'])) {
     // Handle cases where the form was not submitted
     echo "Form submission error: Form data not received.";
 }
+
+// Function to generate QR code for the provided wallet address using Google's QR Code API
+function generate_qr_code($walletAddress) {
+    // Base URL for Google's QR Code API
+    $baseUrl = 'https://chart.googleapis.com/chart';
+
+    // Parameters for generating the QR code
+    $params = array(
+        'chs' => '300x300', // QR code size (300x300 pixels)
+        'cht' => 'qr', // QR code chart type
+        'chl' => urlencode($walletAddress), // QR code data (wallet address)
+    );
+
+    // Construct the full URL with parameters
+    $qrCodeUrl = $baseUrl . '?' . http_build_query($params);
+
+    // Return the URL to the generated QR code
+    return $qrCodeUrl;
+}
 ?>
