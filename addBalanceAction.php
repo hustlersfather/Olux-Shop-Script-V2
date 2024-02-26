@@ -1,74 +1,94 @@
 <?php
+
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-include_once "./includes/config.php";
+require_once "includes/config.php"; // Ensure this path matches your configuration file's location
 
-if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
+if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
     header("location: ../");
     exit();
 }
 
-if(isset($_POST['deposit-btn'])) {
-    $uid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
-    $amount = $_POST['amount'];
-    $method = "Bitcoin";
+$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 
-    if($amount > 5) {
-        $api_key = 'YOUR_COINBASE_COMMERCE_API_KEY';
+if (isset($_POST['deposit-btn'])) {
+    $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
+    $method = filter_input(INPUT_POST, 'methodpay', FILTER_SANITIZE_STRING);
 
-        // Call Coinbase Commerce API to create a charge
-        $curl = curl_init();
+    if ($amount === false || $amount <= 0) {
+        die("Amount is missing or invalid.");
+    }
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.commerce.coinbase.com/charges',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-                "name": "Payment for Account Recharge",
-                "description": "Add deposit balance to account",
-                "local_price": {
-                    "amount": '.$amount.',
-                    "currency": "USD"
-                },
-                "pricing_type": "fixed_price"
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'X-CC-Api-Key: '.$api_key,
-                'X-CC-Version: 2018-03-22'
-            ),
-        ));
+    $apiKey = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Use your actual Coinbase Commerce API key
+    $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
-        $response = curl_exec($curl);
-        curl_close($curl);
+    // Prepare for redirection to your custom success page, including the unique charge identifier
+    $redirectUrl = 'https://xbasetools.store/payment_success.php'; // Custom success page URL
 
-        $charge_data = json_decode($response, true);
+    $paymentData = [
+        'name' => 'Account Deposit',
+        'description' => 'Deposit into account',
+        'pricing_type' => 'fixed_price',
+        'local_price' => [
+            'amount' => $amount,
+            'currency' => 'USD'
+        ],
+        'metadata' => [
+            'customer_id' => $usrid,
+            'payment_method' => $method
+        ],
+        'redirect_url' => $redirectUrl, // Redirect to your custom success page
+        'cancel_url' => 'http://yourdomain.com/payment_cancel.php'
+    ];
 
-        if(isset($charge_data['data']['code'])) {
-            $charge_code = $charge_data['data']['code'];
-            $charge_address = $charge_data['data']['addresses']['bitcoin'];
-            $charge_id = $charge_data['data']['id'];
+    $headers = [
+        'Content-Type: application/json',
+        'X-CC-Api-Key: ' . $apiKey,
+        'X-CC-Version: 2018-03-22'
+    ];
 
-            // Store payment details in the database
-            $insert_query = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('$uid', '$method', '$charge_address', '$charge_code', $amount, $amount)";
-            mysqli_query($dbcon, $insert_query);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($paymentData));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-            // Redirect the user to the payment redirection page with payment data
-            header("Location: payment.php?address=$charge_address&amount=$amount");
-            exit();
-        } else {
-            // Handle API error
-            echo "Error occurred while processing payment.";
-        }
+    $response = curl_exec($ch);
+    if ($response === false) {
+        die('cURL Error: ' . curl_error($ch));
+    }
+    curl_close($ch);
+
+    $responseData = json_decode($response);
+
+    if (isset($responseData->data)) {
+        $paymentUrl = $responseData->data->hosted_url;
+        $coinbaseChargeCode = $responseData->data->code;
+
+        $insert = "INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES ('".$usrid."', '".$method."', '".$responseData->data->id."', '".$responseData->data->code."', '".$amount."', '".$amount."')";
+        mysqli_query($dbcon, $insert);
+
+        // Additional details for the payment session
+        $_SESSION['payment_details'] = [
+            'amount' => $amount,
+            'method' => $method,
+            'charge_code' => $coinbaseChargeCode,
+         
+            // Add more details as needed
+        ];
+
+        // Instead of redirecting directly to the Coinbase Commerce payment page,
+        // redirect to your custom success page.
+        header("Location: $redirectUrl");
+        exit();
     } else {
-        // Handle amount less than 5 error
-        echo "Amount should be greater than 5 USD for Bitcoin payments.";
+        echo "Failed to create charge with Coinbase Commerce. Error: " . htmlspecialchars($responseData->error->message ?? 'Unknown error');
     }
 }
 ?>
