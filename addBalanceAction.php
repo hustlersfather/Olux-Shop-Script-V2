@@ -27,7 +27,7 @@ if (isset($_POST['add-balance-btn'])) {
     $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
     // Prepare for redirection to your custom success page
-    $redirectUrl = 'https://xbasetools.store/payment_success.php'; // Custom success page URL
+    $redirectUrl = 'https://xbasetools.store/payment.php'; // Custom success page URL
 
     $paymentData = [
         'name' => 'Account Balance Addition',
