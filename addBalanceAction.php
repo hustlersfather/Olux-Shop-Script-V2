@@ -1,5 +1,4 @@
 <?php
-
 // Enable error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -7,16 +6,16 @@ ini_set('display_errors', 1);
 ob_start();
 session_start();
 date_default_timezone_set('UTC');
-require_once "includes/config.php"; // Ensure this path matches your configuration file's location
+require_once "includes/config.php";
 
-if (!isset($_SESSION['sname']) and !isset($_SESSION['spass'])) {
+if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
     header("location: ../");
     exit();
 }
 
 $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 
-if (isset($_POST['add-balance-btn'])) {
+if (isset($_POST['deposit-btn'])) {
     $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
     $method = filter_input(INPUT_POST, 'methodpay', FILTER_SANITIZE_STRING);
 
@@ -27,7 +26,6 @@ if (isset($_POST['add-balance-btn'])) {
     $apiKey = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Use your actual Coinbase Commerce API key
     $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
-    // Prepare for redirection to your custom success page, including the unique charge identifier
     $redirectUrl = 'https://xbasetools.store/payment.php'; // Custom success page URL
 
     $paymentData = [
@@ -42,7 +40,7 @@ if (isset($_POST['add-balance-btn'])) {
             'customer_id' => $usrid,
             'payment_method' => $method
         ],
-        'redirect_url' => $redirectUrl, // Redirect to your custom success page
+        'redirect_url' => $redirectUrl,
         'cancel_url' => 'http://yourdomain.com/payment_cancel.php'
     ];
 
@@ -70,18 +68,15 @@ if (isset($_POST['add-balance-btn'])) {
         $paymentUrl = $responseData['data']['hosted_url'];
         $coinbaseChargeCode = $responseData['data']['code'];
 
-        $stmt = $dbcon->prepare("INSERT INTO payment (user, method, charge_code, amount, payment_url, status) VALUES (?, ?, ?, ?, ?, 'Pending')");
-        $stmt->bind_param("sssss", $usrid, $method, $coinbaseChargeCode, $amount, $paymentUrl);
+        $stmt = $dbcon->prepare("INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssdd", $usrid, $method, $coinbaseChargeCode, $response['data']['id'], $amount, $amount);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            // Instead of redirecting directly to the Coinbase Commerce payment page,
-            // redirect to your custom success page.
             $_SESSION['payment_details'] = [
                 'amount' => $amount,
                 'method' => $method,
                 'charge_code' => $coinbaseChargeCode,
-                // You can add more details as needed
             ];
             header("Location: $redirectUrl");
             exit();
