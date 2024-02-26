@@ -311,7 +311,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 function generate_qr_code($wallet_address) {
     // You need to implement your logic to generate a QR code using the Coinbase Commerce API
     // This may involve calling a specific endpoint provided by the Coinbase Commerce platform
-    return "QR code"; // Placeholder
+    // For demonstration purposes, return a placeholder image URL
+    return "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($wallet_address);
 }
 ?>
 
@@ -327,8 +328,7 @@ function generate_qr_code($wallet_address) {
     <p>Your balance has been added successfully!</p>
     <p>Your wallet address:</p>
     <p><?php echo $wallet_address; ?></p>
+    <p>Wallet QR Code:</p>
     <img src="<?php echo generate_qr_code($wallet_address); ?>" alt="Wallet QR Code">
- 
-        
 </body>
 </html>
