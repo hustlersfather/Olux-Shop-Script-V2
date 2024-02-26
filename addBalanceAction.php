@@ -33,8 +33,8 @@ if (isset($_POST['add-balance-btn'])) {
     // URL for Coinbase Commerce API charges endpoint
     $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
-    // Custom success page URL
-    $redirectUrl = 'https://xbasetools.store/payment.php';
+    // Custom success page URL (replace example.com with your domain)
+    $redirectUrl = 'https://example.com/payment_success.php';
 
     // Payment data for Coinbase Commerce API
     $paymentData = [
@@ -99,8 +99,8 @@ if (isset($_POST['add-balance-btn'])) {
             'charge_code' => $coinbaseChargeCode
         ];
 
-        // Redirect the user to the payment URL
-        header("Location: $paymentUrl");
+        // Redirect the user to the custom success page
+        header("Location: $redirectUrl");
         exit();
     } else {
         // Handle errors from Coinbase Commerce
