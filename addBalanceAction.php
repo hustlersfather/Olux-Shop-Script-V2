@@ -64,12 +64,12 @@ if (isset($_POST['add-balance-btn'])) {
     curl_close($ch);
 
     $responseData = json_decode($response, true);
-    if (isset($responseData['data'])) {
+    if ($responseData !== null && isset($responseData['data'])) {
         $paymentUrl = $responseData['data']['hosted_url'];
         $coinbaseChargeCode = $responseData['data']['code'];
 
         $stmt = $dbcon->prepare("INSERT INTO payment (user, method, address, p_data, amount, amountusd) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssdd", $usrid, $method, $coinbaseChargeCode, $response['data']['id'], $amount, $amount);
+        $stmt->bind_param("ssssdd", $usrid, $method, $coinbaseChargeCode, $responseData['data']['id'], $amount, $amount);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
