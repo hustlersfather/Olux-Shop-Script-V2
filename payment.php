@@ -282,113 +282,53 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav> 
-    <div id="bitcoin">
-        <div class="container col-lg-6">
-            <h3>Pay using Bitcoin</h3>
-            <div class="form-group col-lg-4">
-                <center>
-                    <a id="bitcoinbutton" href="bitcoin:<?php echo $address; ?>?amount=<?php echo $amount; ?>&amp;message=JeruxShop-15" target="_blank" title="Pay with Bitcoin">
-                        <img alt="Pay with Bitcoin" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=bitcoin:<?php echo $address; ?>?amount=<?php echo $amount; ?>&amp;message=JeruxShop-15&amp;choe=UTF-8&amp;chs=200x200" style="" height="150" width="150">
-                    </a><br>
-                </center>
-            </div>
-            <div class="form-group col-lg-6">
-                <br><br>
-                Send exactly <span id="selectable"><b><?php echo $amount; ?></b></span> BTC to: <span class="label label-default" id="selectable2"><b><?php echo $address; ?></b></span><br><br>
+</nav> <?php
+// add_balance_success.php
 
-                <div class="module-main-content">
-                    <table border="0" width="100%" style="margin:0px;">
-                        <tbody>
-                            <tr style="display: table-row;">
-                                <td align="left"><span class="text">State</span></td>
-                                <td align="center"><span class="text">:</span></td>
-                                <td align="left"><span class="label label-primary" id="state"></span></td>
-                            </tr>
-                            <tr style="display: table-row;">
-                                <td align="left"><span class="text">Loaded BTC</span></td>
-                                <td align="center"><span class="text">:</span></td>
-                                <td align="left"><span class="label label-primary" id="amount"></span></td>
-                            </tr>
-                            <tr style="display: table-row;">
-                                <td align="left"><span class="text">Last Checked</span></td>
-                                <td align="center"><span class="text">:</span></td>
-                                <td align="left"><span class="label label-primary" id="time"></span> <span id="Img"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <div class="bs-component">
-                <br><br>
-                <div class="well well">
-                    <ul>
-                        <li><b>DO NOT CLOSE THIS PAGE</b></li>
-                        <li>Please wait for at least <b>1</b> confirmation </li>
-                        <li>For high amounts please include high fees </li>
-                        <li>Bitcoin to USD rate is  <b><?php echo $rate; ?></b> (according to Blockchain) </li>
-                        <li>Our bitcoin addresses are SegWit-enabled</li>
-                        <li>This page will be only valid for <b>1 hour</b></li>
-                        <li>Make sure that you send exactly <b><?php echo $amount; ?> BTC</b></li>
-                        <li>After payment an amount of <b><?php echo $amountusd; ?>$</b> will be added to your account</li> 
-                        <li>If any error happened or money didn't show please <a class="label label-default" onclick="pageDiv(9,'Tickets - JeruxShop','tickets.html#open',0); return false;" href="tickets.html#open"><span class="glyphicon glyphicon-pencil"></span> Open a Ticket</a> Fast </li> 
-                    </ul>
-                </div>
-            </div>    
-        </div>
-    </div>
-    <div id="error" class="form-group col-lg-5 "></div>
+session_start();
+require_once "includes/config.php";
 
-<script type="text/javascript">
-    function check_address() {
-        $("#Img").html('<img src="files/img/load.gif" height="15" width="15">').show();
-        $.ajax({
-            type: 'GET',
-            url: 'Check.html?p_data=<?php echo $p_data; ?>',
-            success: function(data) {         
-                var jsonData = JSON.parse(data);
-                $("#time").html(jsonData['time']).show();
-                $("#amount").html(jsonData['btc']).show();
-                $("#state").html(jsonData['state']).show();
-                $("#Img").html('').show();
-                if (jsonData['error'] == 1) { 
-                    $("#error").html(jsonData['errorTXT']).show(); 
-                }
-                if (jsonData['stop'] == 1) { 
-                    stopCheckBTC(); 
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                alert("Error occurred while checking the Bitcoin address.");
-            }
-        });
-    }
+if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
+    header("location: ../");
+    exit();
+}
 
-    var x23 = 10000;
-    var Check_BTC = setInterval(check_address, x23);
+$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 
-    function stopCheckBTC() {
-        clearInterval(Check_BTC);
-        return true;
-    }
+// Retrieve the wallet address for the logged-in user from the database
+$query = "SELECT wallet_address FROM balance_history WHERE user_id = '$usrid' ORDER BY id DESC LIMIT 1";
+$result = mysqli_query($dbcon, $query);
 
-    function selectText(containerid) {
-        var range, selection;
-        if (document.body.createTextRange) {
-            range = document.body.createTextRange();
-            range.moveToElementText(document.getElementById(containerid));
-            range.select();
-        } else if (window.getSelection) {
-            selection = window.getSelection();
-            range = document.createRange();
-            range.selectNodeContents(document.getElementById(containerid));
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-    }
-</script>
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $wallet_address = $row['wallet_address'];
+} else {
+    // Handle the case if the wallet address is not found
+    $wallet_address = "Wallet address not found";
+}
+
+// Function to generate QR code for the wallet address using Coinbase Commerce API
+function generate_qr_code($wallet_address) {
+    // You need to implement your logic to generate a QR code using the Coinbase Commerce API
+    // This may involve calling a specific endpoint provided by the Coinbase Commerce platform
+    return "QR code"; // Placeholder
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Balance Success</title>
+</head>
+<body>
+    <h2>Payment Success</h2>
+    <p>Your balance has been added successfully!</p>
+    <p>Your wallet address:</p>
+    <p><?php echo $wallet_address; ?></p>
+    <img src="<?php echo generate_qr_code($wallet_address); ?>" alt="Wallet QR Code">
+ 
+        
 </body>
 </html>
