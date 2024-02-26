@@ -280,24 +280,7 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav>    
-<?php
-include "header.php"; // Include the header file for consistent header/navigation
-
-ob_start(); // Start output buffering
- 
-date_default_timezone_set('UTC'); // Set default timezone to UTC for consistent time handling
-
-require "db.php"; // Include your database connection setup
-
-// Check if the user is logged in
-if (!isset($_SESSION['sname']) && !isset($_SESSION['spass'])) {
-    header("location: ../"); // Redirect to a relative path "../" if not logged in
-    exit();
-}
-
-$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']); // Securely fetch the user ID from the session
-?>
+</nav>     
 
 <div id="myTabContent" class="tab-content p-5">
         <div id="addBalance">
