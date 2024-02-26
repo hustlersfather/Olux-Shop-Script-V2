@@ -286,24 +286,12 @@ if ($r1 == "1") {
                 <div class="row">
                     <div class="container col-md-4" style="color: var(--font-color); background-color: var(--color-card);">
                         <h4>Add Balance</h4>
-                        <form action="./includes/depositController.php" method="POST" class="mt-2" id="formAddBalance">
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="method">Method</label>
-                                    <select name="methodpay" class="form-control" size="5" style="color: var(--font-color); background-color: var(--color-card);">
-                                        <option value="deposit-btn" selected="">Bitcoin</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="amount">Amount</label>
-                                    <input placeholder="$25" pattern="[10-199]*" type="number" name="amount" class="form-control input-normal" style="color: var(--font-color); background-color: var(--color-card);" required="$25">
-                                </div>
-                            </div>
-                            <input type="submit" name="deposit-btn" class="btn btn-success btn-md">
-                        </form>
-                    </div>
+                        <form action="./addBalanceAction.php" method="POST" class="mt-2" id="formAddBalance">
+                         <label for="balance">Enter Balance Amount:</label><br>
+                          <input type="text" id="balance" name="balance" required><br><br>
+                        <input type="submit" value="Submit">
+    </form>
+</div>
                     <div class="col-md-8">
                         <div class="bs-component">
                             <div class="well well">
@@ -321,36 +309,7 @@ if ($r1 == "1") {
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Include any necessary JavaScript files, libraries, or inline scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#formAddBalance').submit(function(event) {
-                event.preventDefault(); // Prevent the form from submitting normally
-
-                // Serialize form data
-                var formData = $(this).serialize();
-
-                // Send AJAX request
-                $.ajax({
-                    type: 'POST',
-                    url: 'addBalanceAction.php',
-                    data: formData,
-                    success: function(response) {
-                        // Handle success, if needed
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle errors
-                        console.error(error);
-                    }
-                });
-            });
-        });
-    </script>
-</body>
+    </div> 
 </html>
 </body>
 </html>
