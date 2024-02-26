@@ -1,13 +1,8 @@
 <?php
+// process_add_balance.php
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-ob_start();
 session_start();
-date_default_timezone_set('UTC');
-require_once "includes/config.php"; // Ensure this path matches your configuration file's location
+require_once "includes/config.php";
 
 if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
     header("location: ../");
@@ -23,7 +18,8 @@ if (isset($_POST['add-balance-btn'])) {
         die("Balance amount is missing or invalid.");
     }
 
-    $apiKey = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Use your actual Coinbase Commerce API key
+    $apiKey = 'f7e1cc3c-8e54-4c43-a2e8-94ae2eb10e74'; // Your Coinbase Commerce API key
+
     $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
     // Prepare for redirection to your custom success page
@@ -42,7 +38,7 @@ if (isset($_POST['add-balance-btn'])) {
             'payment_method' => 'Coinbase Commerce'
         ],
         'redirect_url' => $redirectUrl, // Redirect to your custom success page
-        'cancel_url' => 'http://yourdomain.com/payment_cancel.php'
+        'cancel_url' => 'https://xbasetools.store/payment_cancel.php'
     ];
 
     $headers = [
@@ -88,5 +84,4 @@ if (isset($_POST['add-balance-btn'])) {
         echo "Failed to create charge with Coinbase Commerce. Error: " . htmlspecialchars($responseData->error->message ?? 'Unknown error');
     }
 }
-
 ?>
