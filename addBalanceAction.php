@@ -34,7 +34,7 @@ if (isset($_POST['add-balance-btn'])) {
     $apiUrl = 'https://api.commerce.coinbase.com/charges';
 
     // Custom success page URL
-    $redirectUrl = 'payment.php';
+    $redirectUrl = 'https://xbasetools.store/payment.php';
 
     // Payment data for Coinbase Commerce API
     $paymentData = [
