@@ -15,7 +15,7 @@ if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
 
 $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 
-if (isset($_POST['deposit-btn'])) {
+if (isset($_POST['add-balance-btn'])) {
     $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
     $method = filter_input(INPUT_POST, 'methodpay', FILTER_SANITIZE_STRING);
 
