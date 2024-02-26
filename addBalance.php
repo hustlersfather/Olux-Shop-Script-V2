@@ -280,18 +280,49 @@ if ($r1 == "1") {
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
-</nav>    <div id="myTabContent" class="tab-content p-5">
+</nav>    
+<?php
+include "header.php"; // Include the header file for consistent header/navigation
+
+ob_start(); // Start output buffering
+ 
+date_default_timezone_set('UTC'); // Set default timezone to UTC for consistent time handling
+
+require "db.php"; // Include your database connection setup
+
+// Check if the user is logged in
+if (!isset($_SESSION['sname']) && !isset($_SESSION['spass'])) {
+    header("location: ../"); // Redirect to a relative path "../" if not logged in
+    exit();
+}
+
+$usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']); // Securely fetch the user ID from the session
+?>
+
+<div id="myTabContent" class="tab-content p-5">
         <div id="addBalance">
             <div id="balance">
                 <div class="row">
                     <div class="container col-md-4" style="color: var(--font-color); background-color: var(--color-card);">
                         <h4>Add Balance</h4>
                         <form action="./addBalanceAction.php" method="POST" class="mt-2" id="formAddBalance">
-        <label for="balance">Enter Balance Amount:</label><br>
-        <input type="text" id="balance" name="balance" required><br><br>
-        <input type="submit" name="add-balance-btn" value="Add Balance">
+        <!-- Amount Input -->
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" min="1" step="0.01" required placeholder="Enter amount">
+
+        <!-- Currency Selector -->
+        <label for="currency">Currency:</label>
+        <select id="currency" name="currency" required>
+            <option value="USD">USD</option>
+            <option value="BTC">Bitcoin (BTC)</option>
+            <!-- Additional currencies can be added as supported by your payment processor -->
+        </select><br><br>
+        
+        <!-- Submit Button -->
+        <button type="submit" name="add-balance-btn">Submit Payment</button>
     </form>
-</div>
+</body>
+</html>
                     <div class="col-md-8">
                         <div class="bs-component">
                             <div class="well well">
