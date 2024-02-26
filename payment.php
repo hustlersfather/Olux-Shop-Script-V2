@@ -283,62 +283,59 @@ if ($r1 == "1") {
   </div>
   <!-- /.container-fluid -->
 </nav><?php
-session_start();
-require_once "includes/config.php";
 
-if (!isset($_SESSION['sname']) || !isset($_SESSION['spass'])) {
-    header("location: ../");
+// User Authentication
+if (!isset($_SESSION['sname']) && !isset($_SESSION['spass'])) {
+    header("Location: login.html"); // Redirect to login if not authenticated
     exit();
 }
 
+// Check for p_data in the URL and ensure it's not empty
+if (!isset($_GET['p_data']) || empty($_GET['p_data'])) {
+    die('Payment data is missing or invalid.');
+}
+
+// Sanitize the p_data input to prevent SQL Injection
+$p_data = mysqli_real_escape_string($dbcon, $_GET['p_data']);
 $usrid = mysqli_real_escape_string($dbcon, $_SESSION['sname']);
 
-// Retrieve the wallet address for the logged-in user from the database
-$query = "SELECT wallet_address FROM balance_history WHERE user_id = '$usrid' ORDER BY id DESC LIMIT 1";
+// Attempt to fetch the payment record from the database
+$query = "SELECT * FROM payment WHERE user='$usrid' AND p_data='$p_data'";
 $result = mysqli_query($dbcon, $query);
 
-if ($result && mysqli_num_rows($result) > 0) {
-    $row = mysqli_fetch_assoc($result);
-    $wallet_address = $row['wallet_address'];
-} else {
-    // Handle the case if the wallet address is not found
-    $wallet_address = "Wallet address not found";
+if (!$result) {
+    die("Error executing query: " . mysqli_error($dbcon)); // Proper error handling
 }
 
-// Function to generate QR code for the wallet address using Google's QR Code API
-function generate_qr_code($walletAddress) {
-    // Base URL for Google's QR Code API
-    $baseUrl = 'https://chart.googleapis.com/chart';
-
-    // Parameters for generating the QR code
-    $params = array(
-        'chs' => '300x300', // QR code size (300x300 pixels)
-        'cht' => 'qr', // QR code chart type
-        'chl' => urlencode($walletAddress), // QR code data (wallet address)
-    );
-
-    // Construct the full URL with parameters
-    $qrCodeUrl = $baseUrl . '?' . http_build_query($params);
-
-    // Return the URL to the generated QR code
-    return $qrCodeUrl;
-}
-?>
+if ($row = mysqli_fetch_assoc($result)) {
+    // Payment record found, proceed with displaying details
+    ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Balance Success</title>
+    <title>Complete Your Payment</title>
+    <link rel="stylesheet" href="path/to/bootstrap.css"> <!-- Make sure this path is correct -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { text-align: center; margin-top: 50px; }
+    </style>
 </head>
 <body>
-    <h2>Payment Success</h2>
-    <p>Your balance has been added successfully!</p>
-    <p>Your wallet address:</p>
-    <p><?php echo $wallet_address; ?></p>
-    <?php if ($wallet_address !== "Wallet address not found"): ?>
-        <img src="<?php echo generate_qr_code($wallet_address); ?>" alt="Wallet QR Code">
-    <?php endif; ?>
+<div class="container">
+    <h2>Pay using Bitcoin</h2>
+    <p>Send exactly <b><?php echo htmlspecialchars($row['amount']); ?> BTC</b> to the address below:</p>
+    <p><a href="#" class="badge badge-success"><?php echo htmlspecialchars($row['address']); ?></a></p>
+    <p>Scan the QR code to complete your payment:</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bitcoin:<?php echo htmlspecialchars($row['address']); ?>?amount=<?php echo htmlspecialchars($row['amount']); ?>&amp;choe=UTF-8&amp;chs=200x200" alt="Payment QR Code">
+</div>
 </body>
 </html>
+
+<?php
+} else {
+    echo "<p>No payment record found for the given data. Please check the information and try again.</p>";
+}
+?>
