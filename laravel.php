@@ -1,3 +1,4 @@
+<?php
  
 mkdir -p resources/views/admin/dashboard
 mkdir -p resources/views/reseller/dashboard
@@ -1019,4 +1020,5 @@ Copy code
 touch resources/views/addBalance.blade.php
 Step 2: Create the deposit directory and bitcoin.blade.php file
 bash
+?>
  
