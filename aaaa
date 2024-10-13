@@ -1,0 +1,236 @@
+To migrate the provided PHP logic into Laravel, the code needs to be broken down according to Laravel’s MVC structure. In Laravel, you should use Controllers for the logic, Models for database interactions, and Blade templates for the views.
+
+Here’s how to refactor the logic completely into Laravel.
+
+Steps:
+
+	1.	Controller: Handle business logic and database queries.
+	2.	Model: Interact with the database using Eloquent ORM.
+	3.	Blade Views: Display HTML with dynamic data.
+	4.	Routes: Define routes for the different functionalities.
+
+1. Model (Reseller and User Models)
+
+Create models for your tables, such as Reseller and User. Use Eloquent ORM to interact with the database.
+
+php artisan make:model Reseller
+php artisan make:model User
+
+Reseller Model (app/Models/Reseller.php):
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Reseller extends Model
+{
+    use HasFactory;
+
+    protected $table = 'resseller';
+    protected $fillable = ['username', 'allsales', 'soldb', 'unsoldb', 'isold', 'iunsold', 'btc'];
+}
+
+User Model (app/Models/User.php):
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['username', 'email', 'balance', 'lastlogin', 'ipurchassed', 'resseller'];
+}
+
+2. Controller
+
+Create a controller to handle the logic for fetching sellers, users, and handling the edits.
+
+php artisan make:controller ResellerController
+php artisan make:controller UserController
+
+Reseller Controller (app/Http/Controllers/ResellerController.php):
+
+namespace App\Http\Controllers;
+
+use App\Models\Reseller;
+use Illuminate\Http\Request;
+
+class ResellerController extends Controller
+{
+    public function index()
+    {
+        // Fetch all sellers
+        $sellers = Reseller::all();
+        return view('resellers.index', compact('sellers'));
+    }
+
+    public function show($username)
+    {
+        // Fetch a specific reseller by username
+        $reseller = Reseller::where('username', $username)->firstOrFail();
+        return view('resellers.show', compact('reseller'));
+    }
+
+    public function update(Request $request, $username)
+    {
+        $reseller = Reseller::where('username', $username)->firstOrFail();
+        
+        // Validate and update reseller details
+        $reseller->update($request->only(['soldb', 'unsoldb', 'isold', 'iunsold']));
+        return redirect()->back()->with('success', 'Reseller updated successfully');
+    }
+
+    public function delete($username)
+    {
+        // Delete a reseller
+        $reseller = Reseller::where('username', $username)->firstOrFail();
+        $reseller->delete();
+
+        return redirect()->route('resellers.index')->with('success', 'Reseller deleted successfully');
+    }
+}
+
+User Controller (app/Http/Controllers/UserController.php):
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        // Fetch all users
+        $users = User::paginate(20);  // Pagination for users
+        return view('users.index', compact('users'));
+    }
+
+    public function show($id)
+    {
+        // Show specific user by id
+        $user = User::findOrFail($id);
+        return view('users.show', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Validate and update user details
+        $user->update($request->only(['username', 'email', 'balance', 'ip']));
+        return redirect()->back()->with('success', 'User updated successfully');
+    }
+
+    public function delete($id)
+    {
+        // Delete user
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully');
+    }
+}
+
+3. Blade Views
+
+Create Blade templates for displaying data.
+
+Resellers Index Blade (resources/views/resellers/index.blade.php):
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="alert alert-danger fade in radius-bordered alert-shadowed">
+        <b>Sellers</b>
+    </div>
+
+    <table class='table table-bordered table-striped'>
+        <tr>
+            <th>Username</th>
+            <th>Whole Sales</th>
+            <th>Current Sales</th>
+            <th>BTC Address</th>
+            <th>Actions</th>
+        </tr>
+        @foreach ($sellers as $seller)
+        <tr>
+            <td>{{ $seller->username }} (seller{{ $seller->id }})</td>
+            <td>${{ $seller->allsales }}</td>
+            <td>${{ $seller->soldb }}</td>
+            <td>{{ $seller->btc ?? 'N/A' }}</td>
+            <td>
+                <a href="{{ route('resellers.show', $seller->username) }}">
+                    <img src="/seller/img/edit.png" width="20px" height="20px">
+                </a>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+@endsection
+
+Reseller Profile Blade (resources/views/resellers/show.blade.php):
+
+@extends('layouts.app')
+
+@section('content')
+<div class="row">
+  <div class="col-md-4">
+    <form method="POST" action="{{ route('resellers.update', $reseller->username) }}">
+      @csrf
+      @method('PUT')
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" value="{{ $reseller->username }}" class="form-control" disabled>
+      </div>
+      <div class="form-group">
+        <label>Sold Balance</label>
+        <input type="text" name="soldb" value="{{ $reseller->soldb }}" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Unsold Balance</label>
+        <input type="text" name="unsoldb" value="{{ $reseller->unsoldb }}" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Items Sold</label>
+        <input type="text" name="isold" value="{{ $reseller->isold }}" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Items Unsold</label>
+        <input type="text" name="iunsold" value="{{ $reseller->iunsold }}" class="form-control">
+      </div>
+      
+      <input type="submit" class="btn btn-primary" value="Save" />
+      <a href="{{ route('resellers.delete', $reseller->username) }}" class="btn btn-danger">Delete</a>
+    </form>
+  </div>
+</div>
+@endsection
+
+4. Routes
+
+Define routes in routes/web.php:
+
+use App\Http\Controllers\ResellerController;
+use App\Http\Controllers\UserController;
+
+// Reseller Routes
+Route::get('/resellers', [ResellerController::class, 'index'])->name('resellers.index');
+Route::get('/resellers/{username}', [ResellerController::class, 'show'])->name('resellers.show');
+Route::put('/resellers/{username}', [ResellerController::class, 'update'])->name('resellers.update');
+Route::get('/resellers/delete/{username}', [ResellerController::class, 'delete'])->name('resellers.delete');
+
+// User Routes
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::get('/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+
+Conclusion
+
+This approach splits the logic between controllers, models, and views, making it easier to maintain. You can now extend this setup further with middleware, policies, or other features that Laravel offers.
