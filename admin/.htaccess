@@ -1,18 +1,87 @@
-  Options +FollowSymLinks
-  RewriteEngine on
-  RewriteRule ^index\.html$ index.php [T=application/x-httpd-php,L]
-  RewriteRule ^Status\.html$ dollar.php [T=application/x-httpd-php,L]
-  RewriteRule ^Tools\.html$ toolsvis.php [T=application/x-httpd-php,L]
-  RewriteRule ^NewsBuyer\.html$ news.php [T=application/x-httpd-php,L]
-  RewriteRule ^NewsSeller\.html$ newseller.php [T=application/x-httpd-php,L]
-  RewriteRule ^Tickets\.html$ ticket.php [T=application/x-httpd-php,L]
-  RewriteRule ^Reports\.html$ reports.php [T=application/x-httpd-php,L]
-  RewriteRule ^Users\.html$ users.php [T=application/x-httpd-php,L]
-  RewriteRule ^WithdrawalRequests\.html$ withdrawalreq.php [T=application/x-httpd-php,L]
-  RewriteRule ^Sellers\.html$ resseller.php [T=application/x-httpd-php,L]
-  RewriteRule ^PaySeller\.html$ rpay.php [T=application/x-httpd-php,L]
-  RewriteRule ^Logout\.html$ lougout.php [T=application/x-httpd-php,L]
-  RewriteRule ^UsersBalance\.html$ usersb.php [T=application/x-httpd-php,L]
-  RewriteRule ^SearchUser\.html$ userss.php [T=application/x-httpd-php,L]
-  RewriteRule ^login\.html$ login.php [T=application/x-httpd-php,L]
-  RewriteRule ^Sales\.html$ sales.php [T=application/x-httpd-php,L]
+<?php
+
+// routes/admin.php
+
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\TicketController;
+use App\Http\Controllers\Admin\WithdrawalController;
+use App\Http\Controllers\Admin\ToolController;
+use App\Http\Controllers\Admin\RessellerController;
+use App\Http\Controllers\Admin\NewsBuyerController;
+use App\Http\Controllers\Admin\NewsRessellerController;
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\WithdrawalController;
+use App\Http\Controllers\ToolController;
+use App\Http\Controllers\RessellerController;
+use App\Http\Controllers\NewsBuyerController;
+use App\Http\Controllers\NewsRessellerController;
+
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    // Admin dashboard
+    Route::get('/', [AdminController::class, 'dashboard'])
+        ->name('admin.dashboard');
+
+    // Ticket Management
+    Route::prefix('tickets')->group(function () {
+        Route::get('/', [TicketController::class, 'index'])->name('admin.tickets.index');  // List tickets
+        Route::get('/create', [TicketController::class, 'create'])->name('admin.tickets.create'); // Show create form
+        Route::post('/', [TicketController::class, 'store'])->name('admin.tickets.store'); // Store new ticket
+        Route::get('/{ticket}/edit', [TicketController::class, 'edit'])->name('admin.tickets.edit'); // Show edit form
+        Route::put('/{ticket}', [TicketController::class, 'update'])->name('admin.tickets.update'); // Update ticket
+        Route::delete('/{ticket}', [TicketController::class, 'destroy'])->name('admin.tickets.destroy'); // Delete ticket
+    });
+
+    // Withdrawal Management
+    Route::prefix('withdrawals')->group(function () {
+        Route::get('/', [WithdrawalController::class, 'index'])->name('admin.withdrawals.index');  
+        Route::get('/create', [WithdrawalController::class, 'create'])->name('admin.withdrawals.create'); 
+        Route::post('/', [WithdrawalController::class, 'store'])->name('admin.withdrawals.store'); 
+        Route::get('/{withdrawal}/edit', [WithdrawalController::class, 'edit'])->name('admin.withdrawals.edit'); 
+        Route::put('/{withdrawal}', [WithdrawalController::class, 'update'])->name('admin.withdrawals.update'); 
+        Route::delete('/{withdrawal}', [WithdrawalController::class, 'destroy'])->name('admin.withdrawals.destroy'); 
+    });
+
+    // Tool Management
+    Route::prefix('tools')->group(function () {
+        Route::get('/', [ToolController::class, 'index'])->name('admin.tools.index');  
+        Route::get('/create', [ToolController::class, 'create'])->name('admin.tools.create'); 
+        Route::post('/', [ToolController::class, 'store'])->name('admin.tools.store'); 
+        Route::get('/{tool}/edit', [ToolController::class, 'edit'])->name('admin.tools.edit'); 
+        Route::put('/{tool}', [ToolController::class, 'update'])->name('admin.tools.update'); 
+        Route::delete('/{tool}', [ToolController::class, 'destroy'])->name('admin.tools.destroy'); 
+    });
+
+    // Reseller Management
+    Route::prefix('ressellers')->group(function () {
+        Route::get('/', [RessellerController::class, 'index'])->name('admin.ressellers.index');  
+        Route::get('/create', [RessellerController::class, 'create'])->name('admin.ressellers.create'); 
+        Route::post('/', [RessellerController::class, 'store'])->name('admin.ressellers.store'); 
+        Route::get('/{resseller}/edit', [RessellerController::class, 'edit'])->name('admin.ressellers.edit'); 
+        Route::put('/{resseller}', [RessellerController::class, 'update'])->name('admin.ressellers.update'); 
+        Route::delete('/{resseller}', [RessellerController::class, 'destroy'])->name('admin.ressellers.destroy'); 
+    });
+
+    // News Buyer Management
+    Route::prefix('newsbuyers')->group(function () {
+        Route::get('/', [NewsBuyerController::class, 'index'])->name('admin.newsbuyers.index');  
+        Route::get('/create', [NewsBuyerController::class, 'create'])->name('admin.newsbuyers.create'); 
+        Route::post('/', [NewsBuyerController::class, 'store'])->name('admin.newsbuyers.store'); 
+        Route::get('/{newsbuyer}/edit', [NewsBuyerController::class, 'edit'])->name('admin.newsbuyers.edit'); 
+        Route::put('/{newsbuyer}', [NewsBuyerController::class, 'update'])->name('admin.newsbuyers.update'); 
+        Route::delete('/{newsbuyer}', [NewsBuyerController::class, 'destroy'])->name('admin.newsbuyers.destroy'); 
+    });
+
+    // News Seller Management
+    Route::prefix('newsressellers')->group(function () {
+        Route::get('/', [NewsRessellerController::class, 'index'])->name('admin.newsressellers.index');  
+        Route::get('/create', [NewsRessellerController::class, 'create'])->name('admin.newsressellers.create'); 
+        Route::post('/', [NewsRessellerController::class, 'store'])->name('admin.newsressellers.store'); 
+        Route::get('/{newsresseller}/edit', [NewsRessellerController::class, 'edit'])->name('admin.newsressellers.edit'); 
+        Route::put('/{newsressseller}', [NewsRessellerController::class, 'update'])->name('admin.newsressellers.update'); 
+        Route::delete('/{newsresseller}', [NewsRessellerController::class, 'destroy'])->name('admin.newsressellers.destroy'); 
+    });
+});
