@@ -6,17 +6,9 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Admin\ToolController;
-use App\Http\Controllers\Admin\RessellerController;
+use App\Http\Controllers\Admin\ResellerController; // Correct casing
 use App\Http\Controllers\Admin\NewsBuyerController;
-use App\Http\Controllers\Admin\NewsRessellerController;
-
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\WithdrawalController;
-use App\Http\Controllers\ToolController;
-use App\Http\Controllers\RessellerController;
-use App\Http\Controllers\NewsBuyerController;
-use App\Http\Controllers\NewsRessellerController;
+use App\Http\Controllers\Admin\NewsResellerController; // Correct casing
 
 use Illuminate\Support\Facades\Route;
 
@@ -56,13 +48,13 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     });
 
     // Reseller Management
-    Route::prefix('ressellers')->group(function () {
-        Route::get('/', [RessellerController::class, 'index'])->name('admin.ressellers.index');  
-        Route::get('/create', [RessellerController::class, 'create'])->name('admin.ressellers.create'); 
-        Route::post('/', [RessellerController::class, 'store'])->name('admin.ressellers.store'); 
-        Route::get('/{resseller}/edit', [RessellerController::class, 'edit'])->name('admin.ressellers.edit'); 
-        Route::put('/{resseller}', [RessellerController::class, 'update'])->name('admin.ressellers.update'); 
-        Route::delete('/{resseller}', [RessellerController::class, 'destroy'])->name('admin.ressellers.destroy'); 
+    Route::prefix('resellers')->group(function () {
+        Route::get('/', [ResellerController::class, 'index'])->name('admin.resellers.index');  
+        Route::get('/create', [ResellerController::class, 'create'])->name('admin.resellers.create'); 
+        Route::post('/', [ResellerController::class, 'store'])->name('admin.resellers.store'); 
+        Route::get('/{reseller}/edit', [ResellerController::class, 'edit'])->name('admin.resellers.edit'); 
+        Route::put('/{reseller}', [ResellerController::class, 'update'])->name('admin.resellers.update'); 
+        Route::delete('/{reseller}', [ResellerController::class, 'destroy'])->name('admin.resellers.destroy'); 
     });
 
     // News Buyer Management
@@ -75,13 +67,13 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
         Route::delete('/{newsbuyer}', [NewsBuyerController::class, 'destroy'])->name('admin.newsbuyers.destroy'); 
     });
 
-    // News Seller Management
-    Route::prefix('newsressellers')->group(function () {
-        Route::get('/', [NewsRessellerController::class, 'index'])->name('admin.newsressellers.index');  
-        Route::get('/create', [NewsRessellerController::class, 'create'])->name('admin.newsressellers.create'); 
-        Route::post('/', [NewsRessellerController::class, 'store'])->name('admin.newsressellers.store'); 
-        Route::get('/{newsresseller}/edit', [NewsRessellerController::class, 'edit'])->name('admin.newsressellers.edit'); 
-        Route::put('/{newsressseller}', [NewsRessellerController::class, 'update'])->name('admin.newsressellers.update'); 
-        Route::delete('/{newsresseller}', [NewsRessellerController::class, 'destroy'])->name('admin.newsressellers.destroy'); 
+    // News Reseller Management
+    Route::prefix('newsresellers')->group(function () {
+        Route::get('/', [NewsResellerController::class, 'index'])->name('admin.newsresellers.index');  
+        Route::get('/create', [NewsResellerController::class, 'create'])->name('admin.newsresellers.create'); 
+        Route::post('/', [NewsResellerController::class, 'store'])->name('admin.newsresellers.store'); 
+        Route::get('/{newsreseller}/edit', [NewsResellerController::class, 'edit'])->name('admin.newsresellers.edit'); 
+        Route::put('/{newsreseller}', [NewsResellerController::class, 'update'])->name('admin.newsresellers.update'); // Fixed typo
+        Route::delete('/{newsreseller}', [NewsResellerController::class, 'destroy'])->name('admin.newsresellers.destroy'); 
     });
 });
