@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\NewsRessellerController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'isAdmin'])->group(function () {
+Route::middleware(['auth:sanctum', 'user/admin'])->group(function () {
     // Admin dashboard
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
