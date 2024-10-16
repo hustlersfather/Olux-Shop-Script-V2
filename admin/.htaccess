@@ -6,74 +6,93 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Admin\ToolController;
-use App\Http\Controllers\Admin\ResellerController; // Correct casing
+use App\Http\Controllers\Admin\RessellerController;
 use App\Http\Controllers\Admin\NewsBuyerController;
-use App\Http\Controllers\Admin\NewsResellerController; // Correct casing
+use App\Http\Controllers\Admin\NewsRessellerController;
 
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Admin dashboard
-    Route::get('/', [AdminController::class, 'dashboard'])
-        ->name('admin.dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     // Ticket Management
     Route::prefix('tickets')->group(function () {
-        Route::get('/', [TicketController::class, 'index'])->name('admin.tickets.index');  // List tickets
-        Route::get('/create', [TicketController::class, 'create'])->name('admin.tickets.create'); // Show create form
-        Route::post('/', [TicketController::class, 'store'])->name('admin.tickets.store'); // Store new ticket
-        Route::get('/{ticket}/edit', [TicketController::class, 'edit'])->name('admin.tickets.edit'); // Show edit form
-        Route::put('/{ticket}', [TicketController::class, 'update'])->name('admin.tickets.update'); // Update ticket
-        Route::delete('/{ticket}', [TicketController::class, 'destroy'])->name('admin.tickets.destroy'); // Delete ticket
+        Route::get('/', [TicketController::class, 'index'])->name('admin.tickets.index');
+        Route::get('/create', [TicketController::class, 'create'])->name('admin.tickets.create');
+        Route::post('/', [TicketController::class, 'store'])->name('admin.tickets.store');
+        Route::get('/{ticket}/edit', [TicketController::class, 'edit'])->name('admin.tickets.edit');
+        Route::put('/{ticket}', [TicketController::class, 'update'])->name('admin.tickets.update');
+        Route::delete('/{ticket}', [TicketController::class, 'destroy'])->name('admin.tickets.destroy');
     });
 
     // Withdrawal Management
     Route::prefix('withdrawals')->group(function () {
-        Route::get('/', [WithdrawalController::class, 'index'])->name('admin.withdrawals.index');  
-        Route::get('/create', [WithdrawalController::class, 'create'])->name('admin.withdrawals.create'); 
-        Route::post('/', [WithdrawalController::class, 'store'])->name('admin.withdrawals.store'); 
-        Route::get('/{withdrawal}/edit', [WithdrawalController::class, 'edit'])->name('admin.withdrawals.edit'); 
-        Route::put('/{withdrawal}', [WithdrawalController::class, 'update'])->name('admin.withdrawals.update'); 
-        Route::delete('/{withdrawal}', [WithdrawalController::class, 'destroy'])->name('admin.withdrawals.destroy'); 
+        Route::get('/', [WithdrawalController::class, 'index'])->name('admin.withdrawals.index');
+        Route::get('/create', [WithdrawalController::class, 'create'])->name('admin.withdrawals.create');
+        Route::post('/', [WithdrawalController::class, 'store'])->name('admin.withdrawals.store');
+        Route::get('/{withdrawal}/edit', [WithdrawalController::class, 'edit'])->name('admin.withdrawals.edit');
+        Route::put('/{withdrawal}', [WithdrawalController::class, 'update'])->name('admin.withdrawals.update');
+        Route::delete('/{withdrawal}', [WithdrawalController::class, 'destroy'])->name('admin.withdrawals.destroy');
+        
+        // Withdrawal Approval
+        Route::post('/{withdrawal}/approve', [WithdrawalController::class, 'approve'])->name('admin.withdrawals.approve');
+        Route::post('/{withdrawal}/reject', [WithdrawalController::class, 'reject'])->name('admin.withdrawals.reject');
+        Route::post('/{withdrawal}/suspend', [WithdrawalController::class, 'suspend'])->name('admin.withdrawals.suspend');
     });
 
     // Tool Management
     Route::prefix('tools')->group(function () {
-        Route::get('/', [ToolController::class, 'index'])->name('admin.tools.index');  
-        Route::get('/create', [ToolController::class, 'create'])->name('admin.tools.create'); 
-        Route::post('/', [ToolController::class, 'store'])->name('admin.tools.store'); 
-        Route::get('/{tool}/edit', [ToolController::class, 'edit'])->name('admin.tools.edit'); 
-        Route::put('/{tool}', [ToolController::class, 'update'])->name('admin.tools.update'); 
-        Route::delete('/{tool}', [ToolController::class, 'destroy'])->name('admin.tools.destroy'); 
+        Route::get('/', [ToolController::class, 'index'])->name('admin.tools.index');
+        Route::get('/create', [ToolController::class, 'create'])->name('admin.tools.create');
+        Route::post('/', [ToolController::class, 'store'])->name('admin.tools.store');
+        Route::get('/{tool}/edit', [ToolController::class, 'edit'])->name('admin.tools.edit');
+        Route::put('/{tool}', [ToolController::class, 'update'])->name('admin.tools.update');
+        Route::delete('/{tool}', [ToolController::class, 'destroy'])->name('admin.tools.destroy');
     });
 
     // Reseller Management
-    Route::prefix('resellers')->group(function () {
-        Route::get('/', [ResellerController::class, 'index'])->name('admin.resellers.index');  
-        Route::get('/create', [ResellerController::class, 'create'])->name('admin.resellers.create'); 
-        Route::post('/', [ResellerController::class, 'store'])->name('admin.resellers.store'); 
-        Route::get('/{reseller}/edit', [ResellerController::class, 'edit'])->name('admin.resellers.edit'); 
-        Route::put('/{reseller}', [ResellerController::class, 'update'])->name('admin.resellers.update'); 
-        Route::delete('/{reseller}', [ResellerController::class, 'destroy'])->name('admin.resellers.destroy'); 
+    Route::prefix('ressellers')->group(function () {
+        Route::get('/', [RessellerController::class, 'index'])->name('admin.ressellers.index');
+        Route::get('/create', [RessellerController::class, 'create'])->name('admin.ressellers.create');
+        Route::post('/', [RessellerController::class, 'store'])->name('admin.ressellers.store');
+        Route::get('/{resseller}/edit', [RessellerController::class, 'edit'])->name('admin.ressellers.edit');
+        Route::put('/{resseller}', [RessellerController::class, 'update'])->name('admin.ressellers.update');
+        Route::delete('/{resseller}', [RessellerController::class, 'destroy'])->name('admin.ressellers.destroy');
+        
+        // Reseller Approval
+        Route::post('/{resseller}/approve', [RessellerController::class, 'approve'])->name('admin.ressellers.approve');
+        Route::post('/{resseller}/reject', [RessellerController::class, 'reject'])->name('admin.ressellers.reject');
+        Route::post('/{resseller}/suspend', [RessellerController::class, 'suspend'])->name('admin.ressellers.suspend');
     });
 
     // News Buyer Management
     Route::prefix('newsbuyers')->group(function () {
-        Route::get('/', [NewsBuyerController::class, 'index'])->name('admin.newsbuyers.index');  
-        Route::get('/create', [NewsBuyerController::class, 'create'])->name('admin.newsbuyers.create'); 
-        Route::post('/', [NewsBuyerController::class, 'store'])->name('admin.newsbuyers.store'); 
-        Route::get('/{newsbuyer}/edit', [NewsBuyerController::class, 'edit'])->name('admin.newsbuyers.edit'); 
-        Route::put('/{newsbuyer}', [NewsBuyerController::class, 'update'])->name('admin.newsbuyers.update'); 
-        Route::delete('/{newsbuyer}', [NewsBuyerController::class, 'destroy'])->name('admin.newsbuyers.destroy'); 
+        Route::get('/', [NewsBuyerController::class, 'index'])->name('admin.newsbuyers.index');
+        Route::get('/create', [NewsBuyerController::class, 'create'])->name('admin.newsbuyers.create');
+        Route::post('/', [NewsBuyerController::class, 'store'])->name('admin.newsbuyers.store');
+        Route::get('/{newsbuyer}/edit', [NewsBuyerController::class, 'edit'])->name('admin.newsbuyers.edit');
+        Route::put('/{newsbuyer}', [NewsBuyerController::class, 'update'])->name('admin.newsbuyers.update');
+        Route::delete('/{newsbuyer}', [NewsBuyerController::class, 'destroy'])->name('admin.newsbuyers.destroy');
+
+        // News Buyer Approval
+        Route::post('/{newsbuyer}/approve', [NewsBuyerController::class, 'approve'])->name('admin.newsbuyers.approve');
+        Route::post('/{newsbuyer}/reject', [NewsBuyerController::class, 'reject'])->name('admin.newsbuyers.reject');
+        Route::post('/{newsbuyer}/suspend', [NewsBuyerController::class, 'suspend'])->name('admin.newsbuyers.suspend');
     });
 
     // News Reseller Management
-    Route::prefix('newsresellers')->group(function () {
-        Route::get('/', [NewsResellerController::class, 'index'])->name('admin.newsresellers.index');  
-        Route::get('/create', [NewsResellerController::class, 'create'])->name('admin.newsresellers.create'); 
-        Route::post('/', [NewsResellerController::class, 'store'])->name('admin.newsresellers.store'); 
-        Route::get('/{newsreseller}/edit', [NewsResellerController::class, 'edit'])->name('admin.newsresellers.edit'); 
-        Route::put('/{newsreseller}', [NewsResellerController::class, 'update'])->name('admin.newsresellers.update'); // Fixed typo
-        Route::delete('/{newsreseller}', [NewsResellerController::class, 'destroy'])->name('admin.newsresellers.destroy'); 
+    Route::prefix('newsressellers')->group(function () {
+        Route::get('/', [NewsRessellerController::class, 'index'])->name('admin.newsressellers.index');
+        Route::get('/create', [NewsRessellerController::class, 'create'])->name('admin.newsressellers.create');
+        Route::post('/', [NewsRessellerController::class, 'store'])->name('admin.newsressellers.store');
+        Route::get('/{newsresseller}/edit', [NewsRessellerController::class, 'edit'])->name('admin.newsressellers.edit');
+        Route::put('/{newsresseller}', [NewsRessellerController::class, 'update'])->name('admin.newsressellers.update');
+        Route::delete('/{newsresseller}', [NewsRessellerController::class, 'destroy'])->name('admin.newsressellers.destroy');
+
+        // News Reseller Approval
+        Route::post('/{newsresseller}/approve', [NewsRessellerController::class, 'approve'])->name('admin.newsressellers.approve');
+        Route::post('/{newsresseller}/reject', [NewsRessellerController::class, 'reject'])->name('admin.newsressellers.reject');
+        Route::post('/{newsresseller}/suspend', [NewsRessellerController::class, 'suspend'])->name('admin.newsressellers.suspend');
     });
 });
