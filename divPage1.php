@@ -226,17 +226,32 @@ Model Definitions for the Tables
 	•	Relationships:
 	•	hasMany users
 	•	Fillable:
-	•	tutoname, url
+	 `id` bigint(20) UNSIGNED NOT NULL,
+  `acctype` varchar(255) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  `infos` text NOT NULL,
+  `url` text NOT NULL,
+  `price` int(11) NOT NULL,
+  `resseller` varchar(255) NOT NULL,
+  `sold` int(11) NOT NULL,
+  `sto` varchar(255) NOT NULL,
+  `dateofsold` timestamp NULL DEFAULT NULL,
+  `tutoname` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 	•	Actions:
-	•	buy()
-  • check
-	•	add()
-  •	delete()
-  •	show()
-  • configure()
-  • report()
-  • generate()
-  • capture()
+	•	buyTutorials()
+ • checkTutorials()
+	• PostTutorials()
+	• createTutorials()
+	•	addTutorials()
+ •	deleteTutorials()
+  •	showTutorials()
+  • configureTutorials()
+  • reportTutorials()
+  • generateTutorials()
+  • captureTutorials()
 	•	Scopes:
 	•	publishedTutorials()
 	•	API Queries:
