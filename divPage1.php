@@ -224,7 +224,7 @@ Model Definitions for the Tables
 18. Tutorials
 
 	•	Relationships:
-	•	belongsTo,  hasMany, hasOne,manyTOmany
+	•	belongsTo Resseller,  hasMany Resseller, hasOne Admin,  manyTomany User
 	•	Fillable:
 	 `id` bigint(20) UNSIGNED NOT NULL,
   `acctype` varchar(255) NOT NULL,
@@ -253,7 +253,7 @@ Model Definitions for the Tables
   • generateTutorials()
   • captureTutorials()
 	•	Scopes:
-	•	publishedTutorials()
+	•	addecTutorials()
 	•	API Queries:
 	•	getTutorialsList()
 
