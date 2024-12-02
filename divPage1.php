@@ -148,7 +148,7 @@ Model Definitions for the Tables
 12. RDPs
 
 	•	Relationships:
-	•	belongsTo users
+	•	belongsTo,  hasMany,
 	•	Fillable:
 	•	url, username
 	•	Scopes:
@@ -224,7 +224,7 @@ Model Definitions for the Tables
 18. Tutorials
 
 	•	Relationships:
-	•	hasMany users
+	•	belongsTo,  hasMany, hasOne,
 	•	Fillable:
 	 `id` bigint(20) UNSIGNED NOT NULL,
   `acctype` varchar(255) NOT NULL,
