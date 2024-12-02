@@ -224,7 +224,7 @@ Model Definitions for the Tables
 18. Tutorials
 
 	•	Relationships:
-	•	belongsTo,  hasMany, hasOne,
+	•	belongsTo,  hasMany, hasOne,manyTOmany
 	•	Fillable:
 	 `id` bigint(20) UNSIGNED NOT NULL,
   `acctype` varchar(255) NOT NULL,
