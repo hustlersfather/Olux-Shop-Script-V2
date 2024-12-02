@@ -1,3 +1,606 @@
+
+integrate Action  buyTutorial ajax model popup comfirm blade update model relationships cast and msny more  scope 
+
+integrate Action view by resseller  post ajax toast fadeout html scope 
+FULL INTEGRATION NO SKIPPING  
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Laravel\Scout\Searchable;  // Assuming you're using Laravel Scout for searchability
+use App\Scopes\ApiQuery;      // Assuming this is a custom scope or trait
+
+class Tutorial extends Model
+{
+    use HasFactory, SoftDeletes, Searchable, ApiQuery;
+
+    // Add the approved field
+    protected $fillable = [
+        'tutoname', 'infos', 'url', 'price', 'resseller', 'sold', 'sto', 'dateofsold', 'acctype', 'country', 'approved'
+    ];
+
+    // Casts for the approved field
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'sold' => 'datetime',
+        'approved' => 'boolean', // New field for approval status
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    // Relations
+    public function resseller()
+    {
+        return $this->belongsTo(Resseller::class, 'resseller');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'purchases');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
+    // Scope to only include approved tutorials
+    public function scopeApproved($query)
+    {
+        return $query->where('approved', true);
+    }
+
+    // Scope to only include unapproved tutorials (pending admin approval)
+    public function scopeUnapproved($query)
+    {
+        return $query->where('approved', false);
+    }
+
+    // Scope query to filter tutorials by seller's country
+    public function scopeByCountry($query, $country)
+    {
+        return $query->where('country', $country);
+    }
+
+    // Scope query to search tutorials by name
+    public function scopeSearchByName($query, $name)
+    {
+        return $query->where('tutoname', 'like', '%' . $name . '%');
+    }
+
+    // Scope query to filter tutorials by price range
+    public function scopePriceRange($query, $minPrice, $maxPrice)
+    {
+        return $query->whereBetween('price', [$minPrice, $maxPrice]);
+    }
+
+    // Scope query to filter tutorials by creation date range
+    public function scopeCreatedBetween($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    // Scope query to filter tutorials by sold date range
+    public function scopeSoldBetween($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('dateofsold', [$startDate, $endDate]);
+    }
+
+    // Format price attribute
+    public function getPriceAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    // Ensure price is stored as a float
+    public function setPriceAttribute($value)
+    {
+        $this->attributes['price'] = (float) $value;
+    }
+
+    // Custom accessor for formatted sold date
+    public function getFormattedSoldDateAttribute()
+    {
+        return $this->sold ? $this->sold->format('d/m/Y') : null;
+    }
+
+    // Custom accessor for formatted creation date
+    public function getFormattedCreatedAtAttribute()
+    {
+        return $this->created_at->format('d/m/Y');
+    }
+
+    // Custom mutator for trimming and capitalizing the tutorial name
+    public function setTutonameAttribute($value)
+    {
+        $this->attributes['tutoname'] = ucfirst(trim($value));
+    }
+
+    // Post a new tutorial, with an optional approval flag
+    public function postTutorial($data)
+    {
+        // By default, mark the tutorial as unapproved
+        $data['approved'] = false;
+        return self::create($data);
+    }
+
+    // Mark tutorial as approved by admin
+    public function approveByAdmin(Admin $admin)
+    {
+        $this->approved = true;
+        $this->admin_id = $admin->id; // Associate the admin approving the tutorial
+        $this->save();
+
+        Log::info("Tutorial approved by admin: {$this->id}");
+
+        // You may use Laravel's Notification system here to notify the admin and resseller
+        // Notification::send($this->resseller, new TutorialApprovedNotification($this));
+        // Notification::send($admin, new TutorialApprovalNotification($this));
+    }
+
+    // Mark tutorial as rejected by admin
+    public function rejectByAdmin(Admin $admin)
+    {
+        $this->approved = false;
+        $this->admin_id = $admin->id; // Associate the admin rejecting the tutorial
+        $this->save();
+
+        Log::info("Tutorial rejected by admin: {$this->id}");
+
+        // Notify the resseller and admin
+        // Notification::send($this->resseller, new TutorialRejectedNotification($this));
+        // Notification::send($admin, new TutorialRejectionNotification($this));
+    }
+
+    // Update a tutorial's details
+    public function updateTutorial($data)
+    {
+        return $this->update($data);
+    }
+
+    // Delete a tutorial (soft delete)
+    public function deleteTutorial($tutorialId)
+    {
+        $tutorial = self::find($tutorialId);
+        if ($tutorial) {
+            $tutorial->delete();
+            return true;
+        }
+        return false;
+    }
+
+    // Mark tutorial as sold
+    public function markAsSold()
+    {
+        $this->sold = 1;
+        $this->dateofsold = now();
+        return $this->save();
+    }
+
+    // Generate reports for tutorials
+    public function generateTutorials()
+    {
+        Log::info("Generating tutorial report for tutorial ID: {$this->id}");
+    }
+
+    // Report a tutorial for review
+    public function reportTutorials()
+    {
+        Log::info("Reporting tutorial for review: ID {$this->id}");
+    }
+
+    // Check if a tutorial has been purchased
+    public function hasBeenPurchased()
+    {
+        return $this->users()->exists();
+    }
+
+    // Event listeners for creating, deleting, or restoring tutorials
+    protected static function booted()
+    {
+        static::creating(function ($tutorial) {
+            Log::info("Creating a new tutorial: {$tutorial->tutoname}");
+        });
+
+        static::deleted(function ($tutorial) {
+            Log::info("Tutorial deleted: {$tutorial->id}");
+        });
+
+        static::restored(function ($tutorial) {
+            Log::info("Tutorial restored: {$tutorial->id}");
+        });
+    }
+
+    // Upload tutorial file with validation for file types
+    public function uploadFile($file)
+    {
+        $allowedExtensions = ['pdf', 'mp4', 'zip'];
+
+        if (!in_array($file->extension(), $allowedExtensions)) {
+            throw new \Exception("Invalid file type.");
+        }
+
+        $path = $file->store('tutorials', 'public');
+        return $path;
+    }
+
+    // Increment view count for tutorial
+    public function incrementViewCount()
+    {
+        $this->increment('views');
+    }
+
+    // Custom badge display logic
+    public function getNavberbadgeHtmlAttribute(): Attribute
+    {
+        return new Attribute(function () {
+            $html = '';
+            if ($this->navberbagde == 0) {
+                $html = '<span class="badge badge--success">New</span>';
+            }
+            return $html;
+        });
+    }
+}
+integrate Action gor buyTutorial ajax model popup html scope 
+use App\Http\Controllers\TutorialController;
+
+// Tutorial routes
+Route::middleware(['auth', 'reseller'])->group(function () {
+    Route::get('/tutorials/create', [TutorialController::class, 'create'])->name('tutorials.create');
+    Route::post('/tutorials', [TutorialController::class, 'store'])->name('tutorials.store');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::post('/tutorials/{id}/approve', [TutorialController::class, 'approve'])->name('tutorials.approve');
+    Route::post('/tutorials/{id}/reject', [TutorialController::class, 'reject'])->name('tutorials.reject');
+});
+
+Route::get('/tutorials', [TutorialController::class, 'index'])->name('tutorials.index');
+Route::get('/tutorials/{id}', [TutorialController::class, 'show'])->name('tutorials.show');
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Laravel\Scout\Searchable;  // Assuming you're using Laravel Scout for searchability
+use App\Scopes\ApiQuery;      // Assuming this is a custom scope or trait
+
+class Tutorial extends Model
+{
+    use HasFactory, SoftDeletes, Searchable, ApiQuery;
+
+    // Add the approved field
+    protected $fillable = [
+        'tutoname', 'infos', 'url', 'price', 'resseller', 'sold', 'sto', 'dateofsold', 'acctype', 'country', 'approved'
+    ];
+
+    // Casts for the approved field
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'sold' => 'datetime',
+        'approved' => 'boolean', // New field for approval status
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    // Relations
+    public function resseller()
+    {
+        return $this->belongsTo(Resseller::class, 'resseller');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'purchases');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
+    // Scope to only include approved tutorials
+    public function scopeApproved($query)
+    {
+        return $query->where('approved', true);
+    }
+
+    // Scope to only include unapproved tutorials (pending admin approval)
+    public function scopeUnapproved($query)
+    {
+        return $query->where('approved', false);
+    }
+
+    // Scope query to filter tutorials by seller's country
+    public function scopeByCountry($query, $country)
+    {
+        return $query->where('country', $country);
+    }
+
+    // Scope query to search tutorials by name
+    public function scopeSearchByName($query, $name)
+    {
+        return $query->where('tutoname', 'like', '%' . $name . '%');
+    }
+
+    // Scope query to filter tutorials by price range
+    public function scopePriceRange($query, $minPrice, $maxPrice)
+    {
+        return $query->whereBetween('price', [$minPrice, $maxPrice]);
+    }
+
+    // Scope query to filter tutorials by creation date range
+    public function scopeCreatedBetween($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    // Scope query to filter tutorials by sold date range
+    public function scopeSoldBetween($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('dateofsold', [$startDate, $endDate]);
+    }
+
+    // Format price attribute
+    public function getPriceAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    // Ensure price is stored as a float
+    public function setPriceAttribute($value)
+    {
+        $this->attributes['price'] = (float) $value;
+    }
+
+    // Custom accessor for formatted sold date
+    public function getFormattedSoldDateAttribute()
+    {
+        return $this->sold ? $this->sold->format('d/m/Y') : null;
+    }
+
+    // Custom accessor for formatted creation date
+    public function getFormattedCreatedAtAttribute()
+    {
+        return $this->created_at->format('d/m/Y');
+    }
+
+    // Custom mutator for trimming and capitalizing the tutorial name
+    public function setTutonameAttribute($value)
+    {
+        $this->attributes['tutoname'] = ucfirst(trim($value));
+    }
+
+    // Post a new tutorial, with an optional approval flag
+    public function postTutorial($data)
+    {
+        // By default, mark the tutorial as unapproved
+        $data['approved'] = false;
+        return self::create($data);
+    }
+
+    // Mark tutorial as approved by admin
+    public function approveByAdmin(Admin $admin)
+    {
+        $this->approved = true;
+        $this->admin_id = $admin->id; // Associate the admin approving the tutorial
+        $this->save();
+
+        Log::info("Tutorial approved by admin: {$this->id}");
+
+        // You may use Laravel's Notification system here to notify the admin and resseller
+        // Notification::send($this->resseller, new TutorialApprovedNotification($this));
+        // Notification::send($admin, new TutorialApprovalNotification($this));
+    }
+
+    // Mark tutorial as rejected by admin
+    public function rejectByAdmin(Admin $admin)
+    {
+        $this->approved = false;
+        $this->admin_id = $admin->id; // Associate the admin rejecting the tutorial
+        $this->save();
+
+        Log::info("Tutorial rejected by admin: {$this->id}");
+
+        // Notify the resseller and admin
+        // Notification::send($this->resseller, new TutorialRejectedNotification($this));
+        // Notification::send($admin, new TutorialRejectionNotification($this));
+    }
+
+    // Update a tutorial's details
+    public function updateTutorial($data)
+    {
+        return $this->update($data);
+    }
+
+    // Delete a tutorial (soft delete)
+    public function deleteTutorial($tutorialId)
+    {
+        $tutorial = self::find($tutorialId);
+        if ($tutorial) {
+            $tutorial->delete();
+            return true;
+        }
+        return false;
+    }
+
+    // Mark tutorial as sold
+    public function markAsSold()
+    {
+        $this->sold = 1;
+        $this->dateofsold = now();
+        return $this->save();
+    }
+
+    // Generate reports for tutorials
+    public function generateTutorials()
+    {
+        Log::info("Generating tutorial report for tutorial ID: {$this->id}");
+    }
+
+    // Report a tutorial for review
+    public function reportTutorials()
+    {
+        Log::info("Reporting tutorial for review: ID {$this->id}");
+    }
+
+    // Check if a tutorial has been purchased
+    public function hasBeenPurchased()
+    {
+        return $this->users()->exists();
+    }
+
+    // Event listeners for creating, deleting, or restoring tutorials
+    protected static function booted()
+    {
+        static::creating(function ($tutorial) {
+            Log::info("Creating a new tutorial: {$tutorial->tutoname}");
+        });
+
+        static::deleted(function ($tutorial) {
+            Log::info("Tutorial deleted: {$tutorial->id}");
+        });
+
+        static::restored(function ($tutorial) {
+            Log::info("Tutorial restored: {$tutorial->id}");
+        });
+    }
+
+    // Upload tutorial file with validation for file types
+    public function uploadFile($file)
+    {
+        $allowedExtensions = ['pdf', 'mp4', 'zip'];
+
+        if (!in_array($file->extension(), $allowedExtensions)) {
+            throw new \Exception("Invalid file type.");
+        }
+
+        $path = $file->store('tutorials', 'public');
+        return $path;
+    }
+
+    // Increment view count for tutorial
+    public function incrementViewCount()
+    {
+        $this->increment('views');
+    }
+
+    // Custom badge display logic
+    public function getNavberbadgeHtmlAttribute(): Attribute
+    {
+        return new Attribute(function () {
+            $html = '';
+            if ($this->navberbagde == 0) {
+                $html = '<span class="badge badge--success">New</span>';
+            }
+            return $html;
+        });
+    }
+}
+ 
+
+namespace App\Http\Controllers;
+
+use App\Models\Tutorial;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use App\Events\TutorialBought;
+
+class TutorialController extends Controller
+{
+    // Show all tutorials
+    public function index()
+    {
+        $tutorials = Tutorial::all();
+        return view('tutorials.index', compact('tutorials'));
+    }
+
+    // Show a single tutorial
+    public function show($id)
+    {
+        $tutorial = Tutorial::findOrFail($id);
+        return view('tutorials.show', compact('tutorial'));
+    }
+
+    // Store a new tutorial
+    public function store(Request $request)
+    {
+        $tutorial = Tutorial::create($request->all());
+        return redirect()->route('tutorials.index');
+    }
+
+    // Approve tutorial
+    public function approve($id)
+    {
+        $tutorial = Tutorial::findOrFail($id);
+        $tutorial->approveByAdmin(Auth::user());
+        return redirect()->back()->with('message', 'Tutorial Approved!');
+    }
+
+    // Reject tutorial
+    public function reject($id)
+    {
+        $tutorial = Tutorial::findOrFail($id);
+        $tutorial->rejectByAdmin(Auth::user());
+        return redirect()->back()->with('message', 'Tutorial Rejected!');
+    }
+
+    // Buy tutorial via AJAX
+    public function buyTutorial(Request $request, $id)
+    {
+        $tutorial = Tutorial::findOrFail($id);
+
+        if ($tutorial->hasBeenPurchased()) {
+            return response()->json(['error' => 'This tutorial has already been purchased.'], 400);
+        }
+
+        // Mark as sold
+        $tutorial->markAsSold();
+
+        // Associate user with this tutorial
+        Auth::user()->tutorials()->attach($tutorial);
+
+        // Trigger the tutorial bought event (optional, for notifications)
+        event(new TutorialBought($tutorial));
+
+        return response()->json(['success' => 'Tutorial bought successfully!', 'tutorial' => $tutorial]);
+    }
+}
+
+use App\Http\Controllers\TutorialController;
+
+// Reseller routes
+Route::middleware(['auth', 'reseller'])->group(function () {
+    Route::get('/tutorials', [TutorialController::class, 'index'])->name('tutorials.index');
+    Route::get('/tutorials/create', [TutorialController::class, 'create'])->name('tutorials.create');
+    Route::post('/tutorials', [TutorialController::class, 'store'])->name('tutorials.store');
+    Route::post('/tutorials/{id}/buy', [TutorialController::class, 'buyTutorial'])->name('tutorials.buy');
+});
+
+// Admin routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::post('/tutorials/{id}/approve', [TutorialController::class, 'approve'])->name('tutorials.approve');
+    Route::post('/tutorials/{id}/reject', [TutorialController::class, 'reject'])->name('tutorials.reject');
+});
+
+// Tutorial show route
+Route::get('/tutorials/{id}', [TutorialController::class, 'show'])->name('tutorials.show');
+
 <?php
  
 mkdir -p resources/views/admin/dashboard
