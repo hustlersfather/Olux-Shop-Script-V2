@@ -1,0 +1,1 @@
+views/main/table.blade.php
